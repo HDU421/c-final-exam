@@ -1,5 +1,5 @@
 
-# Created by https://www.gitignore.io/api/c,c++,linux,macos,clion,windows
+# Created by https://www.gitignore.io/api/c,c++,linux,macos,cmake,clion,windows
 
 ### C ###
 # Prerequisites
@@ -139,6 +139,18 @@ fabric.properties
 # Sonarlint plugin
 .idea/sonarlint
 
+### CMake ###
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+build
+
 ### Linux ###
 *~
 
@@ -202,6 +214,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/c,c++,linux,macos,clion,windows
-
-/build/
+# End of https://www.gitignore.io/api/c,c++,linux,macos,cmake,clion,windows
