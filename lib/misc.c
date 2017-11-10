@@ -13,13 +13,3 @@ void clearConsole()
         system("clear");
     #endif
 }
-
-void pauseConsole()
-{
-    #if defined _WIN32 || defined _WIN64
-        system("pause > nul");
-    #else
-        #include <unistd.h>
-        pause();
-    #endif
-}

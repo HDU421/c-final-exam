@@ -3,9 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    printf("Hello World!\n");
-    pauseConsole();
     clearConsole();
-    pauseConsole();
+    printf("Hello World!\n");
     return 0;
 }
