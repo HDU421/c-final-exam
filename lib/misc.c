@@ -14,7 +14,7 @@ void clearConsole()
     #endif
 }
 
-void pause()
+void pauseConsole()
 {
     #if defined _WIN32 || defined _WIN64
         system("pause > nul");

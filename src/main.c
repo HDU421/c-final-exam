@@ -4,8 +4,8 @@
 int main(int argc, char *argv[])
 {
     printf("Hello World!\n");
-    pause();
+    pauseConsole();
     clearConsole();
-    pause();
+    pauseConsole();
     return 0;
 }
