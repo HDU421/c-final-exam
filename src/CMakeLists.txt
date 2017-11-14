@@ -5,4 +5,4 @@ set(MAIN_SOURCE
         )
 
 add_executable(main ${MAIN_SOURCE})
-target_link_libraries(main libmisc)
+target_link_libraries(main lib)
