@@ -1,5 +1,5 @@
 //
-// Created by codgi on 12/22/2017.
+// Created by codgician on 12/22/2017.
 //
 
 #ifndef C_FINAL_EXAM_MACRO_H
@@ -9,10 +9,22 @@
 #ifndef C_FINAL_EXAM_DATETIME_H
 #define C_FINAL_EXAM_DATETIME_H
 
-bool validateYear(int year);
-bool validateMonth(int month);
-bool isLeapYear(int year);
-int getMonthDayCount(int month, int year);
+typedef struct _Datetime {
+    int year;
+    int month;
+    int day;
+    int hour;
+} datetime;
+
+typedef struct _DatetimeReturn {
+    int satus;
+    int content;
+} datetimeReturn;
+
+int validateDatetime(datetime t);
+int cmpDatetime(datetime a, datetime b);
+datetimeReturn getIntervalDays(datetime startDatetime, datetime endDatetime);
+datetimeReturn getIntervalHours(datetime startDatetime, datetime endDatetime);
 
 #endif //C_FINAL_EXAM_DATETIME_H
 

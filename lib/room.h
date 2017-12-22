@@ -14,14 +14,23 @@
 #define HOUR_PRICE 0
 #define DAY_PRICE 1
 
-bool validateRoomType(int roomType);
-bool validatePriceType(int priceType);
-bool isRoomAvailable(int roomType);
-int getRoomTypeCount();
-int addNewRoom(int hourPrice, int dayPrice, char *roomName);
-int getRoomPrice(int roomType, int priceType);
-int updateRoomPrice(int roomType, int priceType, int newPrice);
-int updateRoomAvailability(int roomType, bool isAvailable);
+typedef struct _Room {
+    int hourPrice;
+    int dayPrice;
+    char roomName[MAX_ROOM_NAME_LENGTH];
+    bool isAvailable;
+} room;
+
+typedef struct _RoomReturn {
+    int status;
+    room content;
+} roomReturn;
+
+int validateRoomType(int roomType);
+int validateRoomInfo(room roomInfo);
+roomReturn getRoomInfo(int roomType);
+int addRoomInfo(room newInfo);
+int updateRoomInfo(int roomType, room newInfo);
 
 #endif //C_FINAL_EXAM_ROOM_H
 
