@@ -8,4 +8,3 @@
 #endif //C_FINAL_EXAM_MISC_H
 
 void clearConsole();
-void pauseConsole();
