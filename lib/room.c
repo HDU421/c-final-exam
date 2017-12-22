@@ -1,6 +1,9 @@
 //
 // Created by codgician on 12/22/2017.
 //
+// This file contains variables and functions
+// that are related to room management.
+//
 
 #include <string.h>
 
@@ -20,6 +23,11 @@ int roomTypeCount = 0;
 bool validateRoomType(int roomType)
 {
     return roomType >= 0 && roomType < roomTypeCount;
+}
+
+bool validatePriceType(int priceType)
+{
+    return priceType == HOUR_PRICE || priceType == DAY_PRICE;
 }
 
 bool isRoomAvailable(int roomType)
