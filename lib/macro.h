@@ -1,5 +1,5 @@
 //
-// Created by codgi on 12/22/2017.
+// Created by codgician on 12/22/2017.
 //
 
 #ifndef C_FINAL_EXAM_MACRO_H

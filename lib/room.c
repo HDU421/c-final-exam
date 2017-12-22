@@ -18,13 +18,20 @@ int validateRoomType(int roomType) {
     return SUCCESS;
 }
 
+int validatePriceType(int priceType) {
+    if (priceType != HOUR_PRICE && priceType != DAY_PRICE) {
+        return ERROR_INVALID_PRICE_TYPE;
+    }
+    return SUCCESS;
+}
+
 int validateRoomInfo(room roomInfo) {
 
-    if (roomInfo.hourPrice <= 0) {
+    if (roomInfo.price[HOUR_PRICE] <= 0) {
         return ERROR_INVALID_HOUR_PRICE;
     }
 
-    if (roomInfo.dayPrice <= 0) {
+    if (roomInfo.price[DAY_PRICE] <= 0) {
         return ERROR_INVALID_DAY_PRICE;
     }
 

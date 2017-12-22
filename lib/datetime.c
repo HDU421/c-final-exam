@@ -1,6 +1,9 @@
 //
 // Created by codgician on 12/22/2017.
 //
+// This file contains several functions
+// that are related to datetime calculations.
+//
 
 #include "datetime.h"
 
@@ -69,21 +72,21 @@ datetimeReturn getIntervalDays(datetime startDatetime, datetime endDatetime) {
     datetimeReturn result;
 
     if (validateDatetime(startDatetime) != SUCCESS) {
-        result.satus = validateDatetime(startDatetime);
+        result.status = validateDatetime(startDatetime);
         return result;
     }
 
     if (validateDatetime(endDatetime) != SUCCESS) {
-        result.satus = validateDatetime(endDatetime);
+        result.status = validateDatetime(endDatetime);
         return result;
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        result.satus = ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
+        result.status = ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
         return result;
     }
 
-    result.satus = SUCCESS;
+    result.status = SUCCESS;
     result.content = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
 
     for (int i = startDatetime.year + 1; i <= endDatetime.year - 1; i++) {
@@ -97,21 +100,21 @@ datetimeReturn getIntervalHours(datetime startDatetime, datetime endDatetime) {
     datetimeReturn result;
 
     if (validateDatetime(startDatetime) != SUCCESS) {
-        result.satus = validateDatetime(startDatetime);
+        result.status = validateDatetime(startDatetime);
         return result;
     }
 
     if (validateDatetime(endDatetime) != SUCCESS) {
-        result.satus = validateDatetime(endDatetime);
+        result.status = validateDatetime(endDatetime);
         return result;
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        result.satus = ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
+        result.status = ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
         return result;
     }
 
-    result.satus = SUCCESS;
+    result.status = SUCCESS;
     result.content += endDatetime.hour - startDatetime.hour;
     result.content += getIntervalDays(startDatetime, endDatetime).content * 24;
 
