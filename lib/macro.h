@@ -5,6 +5,9 @@
 #ifndef C_FINAL_EXAM_MACRO_H
 #define C_FINAL_EXAM_MACRO_H
 
+// Input buffer
+#define BUFFER_SIZE 100
+
 // Process bool type
 #include <stdbool.h>
 #define bool _Bool
@@ -36,5 +39,7 @@
 #define ERROR_INVALID_HOUR 0x10
 
 #define ERROR_START_DATETIME_LARGER_THAN_END_DATETIME 0x11
+
+#define ERROR_EXCEED_MAXMIUM_BUFFER_LENGTH 0x12
 
 #endif //C_FINAL_EXAM_MACRO_H

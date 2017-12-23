@@ -20,32 +20,24 @@ void initRevenueArr() {
     }
 }
 
-customerReturn getPrice(room roomInfo, int priceType, int duration) {
-    customerReturn result;
+long long int getPrice(room roomInfo, int priceType, long long int duration) {
 
     if (validateRoomInfo(roomInfo) != SUCCESS) {
-        result.status =  validateRoomInfo(roomInfo);
-        return result;
+        return validateRoomInfo(roomInfo);
     }
 
     if (validatePriceType(priceType) != SUCCESS) {
-        result.status = validatePriceType(priceType);
-        return result;
+        return validatePriceType(priceType);
     }
 
     if (duration <= 0) {
-        result.status = ERROR_INVALID_DURATION;
-        return result;
+        return ERROR_INVALID_DURATION;
     }
 
-    result.status = SUCCESS;
-    result.content = roomInfo.price[priceType] * duration;
-
-    return result;
+    return roomInfo.price[priceType] * duration;
 }
 
 int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
-    customerReturn result;
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
         return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
@@ -62,33 +54,20 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
     // If time period is within current month
     if (startDatetime.year == endDatetime.year && startDatetime.month == endDatetime.month) {
 
-        datetimeReturn duration = getIntervalDays(startDatetime, endDatetime);
-        if (duration.status != SUCCESS) {
-            return duration.status;
-        }
+        long long int duration = getIntervalDays(startDatetime, endDatetime);
+        int price = getPrice(roomInfo, priceType, duration);
 
-        customerReturn price = getPrice(roomInfo, priceType, duration.content);
-        if (price.status != SUCCESS) {
-            return price.status;
-        }
-
-        revenueArr[cntYear][cntMonth].expected += price.content;
-        revenueArr[cntYear][cntMonth].real += price.content;
+        revenueArr[cntYear][cntMonth].expected += price;
+        revenueArr[cntYear][cntMonth].real += price;
 
     } else {
 
         if (priceType == HOUR_PRICE) {
-            customerReturn price = getPrice(roomInfo, priceType, 24 * (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1) - startDatetime.hour);
-            if (price.status != SUCCESS) {
-                return price.status;
-            }
-            revenueArr[cntYear][cntMonth].expected += price.content;
+            int price = getPrice(roomInfo, priceType, 24 * (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1) - startDatetime.hour);
+            revenueArr[cntYear][cntMonth].expected += price;
         } else {
-            customerReturn price = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
-            if (price.status != SUCCESS) {
-                return price.status;
-            }
-            revenueArr[cntYear][cntMonth].expected += price.content;
+            int price = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
+            revenueArr[cntYear][cntMonth].expected += price;
         }
 
         while (cntYear < endDatetime.year - 1970 || (cntYear == endDatetime.year - 1970 && cntMonth < endDatetime.month - 2)) {
@@ -100,7 +79,7 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
                 cntMonth++;
             }
 
-            customerReturn price;
+            int price;
 
             if (priceType == HOUR_PRICE) {
                 price = getPrice(roomInfo, priceType, 24 * getMonthDayCount(cntMonth + 1, cntYear + 1970));
@@ -108,25 +87,17 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
                 price = getPrice(roomInfo, priceType, getMonthDayCount(cntMonth + 1, cntYear + 1970));
             }
 
-            if (price.status != SUCCESS) {
-                return price.status;
-            } else {
-                revenueArr[cntYear][cntMonth].expected += price.content;
-            }
+
+            revenueArr[cntYear][cntMonth].expected += price;
+
         }
 
         if (priceType == HOUR_PRICE) {
-            customerReturn price = getPrice(roomInfo, priceType, 24 * (endDatetime.day - 1) + endDatetime.hour);
-            if (price.status != SUCCESS) {
-                return price.status;
-            }
-            revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected += price.content;
+            int price = getPrice(roomInfo, priceType, 24 * (endDatetime.day - 1) + endDatetime.hour);
+            revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected += price;
         } else {
-            customerReturn price = getPrice(roomInfo, priceType, endDatetime.day - 1);
-            if (price.status != SUCCESS) {
-                return price.status;
-            }
-            revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected+= price.content;
+            int price = getPrice(roomInfo, priceType, endDatetime.day - 1);
+            revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected+= price;
         }
     }
 

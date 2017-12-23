@@ -20,15 +20,10 @@ typedef struct _Room {
     bool isAvailable;
 } room;
 
-typedef struct _RoomReturn {
-    int status;
-    room content;
-} roomReturn;
-
 int validateRoomType(int roomType);
 int validatePriceType(int priceType);
 int validateRoomInfo(room roomInfo);
-roomReturn getRoomInfo(int roomType);
+room getRoomInfo(int roomType);
 int addRoomInfo(room newInfo);
 int updateRoomInfo(int roomType, room newInfo);
 

@@ -17,18 +17,13 @@
 #ifndef C_FINAL_EXAM_CUSTOMER_H
 #define C_FINAL_EXAM_CUSTOMER_H
 
-typedef struct _CustomerReturn {
-    int status;
-    int content;
-} customerReturn;
-
 typedef struct _Revenue {
     int expected;
     int real;
 } revenue;
 
 void initRevenueArr();
-customerReturn getPrice(room roomInfo, int priceType, int duration);
+long long int getPrice(room roomInfo, int priceType, long long int duration);
 int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime);
 revenue getReport(int year, int month);
 

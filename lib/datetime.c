@@ -68,55 +68,44 @@ int cmpDatetime(datetime a, datetime b) {
     }
 }
 
-datetimeReturn getIntervalDays(datetime startDatetime, datetime endDatetime) {
-    datetimeReturn result;
+long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
     if (validateDatetime(startDatetime) != SUCCESS) {
-        result.status = validateDatetime(startDatetime);
-        return result;
+        return validateDatetime(startDatetime);
     }
 
     if (validateDatetime(endDatetime) != SUCCESS) {
-        result.status = validateDatetime(endDatetime);
-        return result;
+        return validateDatetime(endDatetime);
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        result.status = ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
-        return result;
+        return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
     }
 
-    result.status = SUCCESS;
-    result.content = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
+    long long int result = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
 
     for (int i = startDatetime.year + 1; i <= endDatetime.year - 1; i++) {
-        result.content += (isLeapYear(i) ? 366 : 365);
+        result += (isLeapYear(i) ? 366 : 365);
     }
 
     return result;
 }
 
-datetimeReturn getIntervalHours(datetime startDatetime, datetime endDatetime) {
-    datetimeReturn result;
+long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
 
     if (validateDatetime(startDatetime) != SUCCESS) {
-        result.status = validateDatetime(startDatetime);
-        return result;
+        return validateDatetime(startDatetime);
     }
 
     if (validateDatetime(endDatetime) != SUCCESS) {
-        result.status = validateDatetime(endDatetime);
-        return result;
+        return validateDatetime(endDatetime);
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        result.status = ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
-        return result;
+        return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
     }
 
-    result.status = SUCCESS;
-    result.content += endDatetime.hour - startDatetime.hour;
-    result.content += getIntervalDays(startDatetime, endDatetime).content * 24;
+    long long int result = endDatetime.hour - startDatetime.hour + getIntervalDays(startDatetime, endDatetime) * 24;
 
     return result;
 }

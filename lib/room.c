@@ -38,17 +38,16 @@ int validateRoomInfo(room roomInfo) {
     return SUCCESS;
 }
 
-roomReturn getRoomInfo(int roomType) {
-    roomReturn result;
+room getRoomInfo(int roomType) {
 
     if (validateRoomType(roomType) != SUCCESS) {
-        result.status = ERROR_INVALID_ROOM_TYPE;
+        // result.status = ERROR_INVALID_ROOM_TYPE;
     } else {
-        result.status = SUCCESS;
-        result.content = roomArr[roomType];
+        // result.status = SUCCESS;
+        // result.content = roomArr[roomType];
     }
 
-    return result;
+    return roomArr[roomType];
 }
 
 int addRoomInfo(room newInfo) {

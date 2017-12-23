@@ -16,16 +16,11 @@ typedef struct _Datetime {
     int hour;
 } datetime;
 
-typedef struct _DatetimeReturn {
-    int status;
-    int content;
-} datetimeReturn;
-
 int validateDatetime(datetime t);
 int cmpDatetime(datetime a, datetime b);
 int getMonthDayCount(int month, int year);
-        datetimeReturn getIntervalDays(datetime startDatetime, datetime endDatetime);
-datetimeReturn getIntervalHours(datetime startDatetime, datetime endDatetime);
+long long int getIntervalDays(datetime startDatetime, datetime endDatetime);
+long long int getIntervalHours(datetime startDatetime, datetime endDatetime);
 
 #endif //C_FINAL_EXAM_DATETIME_H
 
