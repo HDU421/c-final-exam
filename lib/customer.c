@@ -7,10 +7,10 @@
 
 #include "customer.h"
 
+// struct "revenue" is defined in "customer.h"
 revenue revenueArr[YEAR_COUNT][MONTH_COUNT];
 
-long long int moneySum = 0;
-
+/* Initialize revenue array */
 void initRevenueArr() {
     for (int i = 0; i < YEAR_COUNT; i++) {
         for (int j = 0; j < MONTH_COUNT; j++) {
@@ -20,6 +20,7 @@ void initRevenueArr() {
     }
 }
 
+/* Calculate total price for a specific check-in */
 long long int getPrice(room roomInfo, int priceType, long long int duration) {
 
     if (validateRoomInfo(roomInfo) != SUCCESS) {
@@ -37,6 +38,7 @@ long long int getPrice(room roomInfo, int priceType, long long int duration) {
     return roomInfo.price[priceType] * duration;
 }
 
+/* Check in and update revenue */
 int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
@@ -104,6 +106,7 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
     return SUCCESS;
 }
 
+/* Return financial report for a specific month */
 revenue getReport(int year, int month) {
     return revenueArr[year - 1970][month - 1];
 }

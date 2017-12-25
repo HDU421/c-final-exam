@@ -7,12 +7,16 @@
 
 #include "datetime.h"
 
+// Days for each month
+// Should not be used directly! Use getMonthDayCount(int month, int year) instead!
 int monthArr[MONTH_COUNT] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+/* Judge whether a given year is a leap year */
 bool isLeapYear(int year) {
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 }
 
+/* Get day count of a certain month of a certain year */
 int getMonthDayCount(int month, int year) {
     if (month == 2) {
         return isLeapYear(year) ? 29 : 28;
@@ -21,6 +25,7 @@ int getMonthDayCount(int month, int year) {
     }
 }
 
+/* Get the position of a specific date in its year */
 int getDayNumInYear(datetime t) {
     int result = 0;
 
@@ -33,6 +38,7 @@ int getDayNumInYear(datetime t) {
     return result;
 }
 
+/* Validate given datetime */
 int validateDatetime(datetime t) {
     if (t.year < YEAR_MIN || t.year > YEAR_MAX) {
         return ERROR_INVALID_YEAR;
@@ -49,7 +55,11 @@ int validateDatetime(datetime t) {
     return SUCCESS;
 }
 
-// 0: a < b, 1: a > b, 2: a == b
+/* Compare two given datetime
+ * a < b: return 0;
+ * a > b: return 1;
+ * a == b: return 2;
+ */
 int cmpDatetime(datetime a, datetime b) {
     if (a.year == b.year) {
         if (a.month == b.month) {
@@ -68,6 +78,7 @@ int cmpDatetime(datetime a, datetime b) {
     }
 }
 
+/* Get day count between two given datetimes */
 long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
     if (validateDatetime(startDatetime) != SUCCESS) {
@@ -91,6 +102,7 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
     return result;
 }
 
+/* Get hour count between two given datetime */
 long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
 
     if (validateDatetime(startDatetime) != SUCCESS) {

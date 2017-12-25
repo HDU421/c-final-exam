@@ -1,19 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
+#include "customer.h"
 #include "macro.h"
 #include "misc.h"
 
-char *trim(char *str);
-long long int retrieveIntegerInput();
-void roomMenu();
-void customerMenu();
-void reportMenu();
-void hiddenMenu();
-void mainMenu();
 
-/* Returns a trimmed string. */
+/* Returns a trimmed string */
 char *trim(char *str) {
     char *result;
 
@@ -33,17 +28,16 @@ char *trim(char *str) {
     return result;
 }
 
-/* Handle integer input. */
+/* Handle integer input */
 long long int retrieveIntegerInput() {
     // Declare a string as input buffer
-    char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_LENGTH];
 
     while (fgets(buffer, sizeof(buffer), stdin)) {
 
         // Flush stdin and prompt for input again
         // if user input exceeds buffer size.
-        if (strlen(buffer) == BUFFER_SIZE - 1)
-        {
+        if (strlen(buffer) == BUFFER_LENGTH - 1) {
             flushStdin();
             printf("Input is too long, please try again...\n");
             continue;
@@ -52,11 +46,28 @@ long long int retrieveIntegerInput() {
         // Escape blank spaces
         strcpy(buffer, trim(buffer));
 
-        // If input is blank
-        // backspace and await input again
-        if (strlen(buffer) == 0)
-        {
+        // If input is blank, backspace and await input again
+        if (strlen(buffer) == 0) {
             printf("\b\r");
+            continue;
+        }
+
+        // Ensure that the retrieved value is smaller than int32.
+        if (strlen(buffer) > INT32_LENGTH) {
+            printf("Input value is too big, please try again...\n");
+            continue;
+        }
+
+        // Validate if user input is an integer
+        bool isNumber = true;
+        for (int i = 0; i < strlen(buffer); i++) {
+            if (!isdigit(buffer[i])) {
+                isNumber = false;
+                break;
+            }
+        }
+        if (!isNumber) {
+            printf("Input should only contain digits, please try again...\n");
             continue;
         }
 
@@ -67,9 +78,9 @@ long long int retrieveIntegerInput() {
     }
 }
 
-/* Prints the room menu. */
-void roomMenu() {
-    clearConsole();
+/* Functions below prints the according menu
+ * and returns the next menu */
+int roomMenu() {
 
     printf("\t\tRoom Menu\t\t\n\n\n");
     printf("\t1. Add new room information\n\n");
@@ -78,52 +89,29 @@ void roomMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    // Retrieve input
-    int input = retrieveIntegerInput();
-
-    // Keep prompting for input if input is out of range
-    while (input < 1 || input > 3) {
-        printf("Invalid input, please try again...\n");
-        input = retrieveIntegerInput();
+    int choice = retrieveIntegerInput();
+    while (choice < 0 || choice > 3) {
+        choice = retrieveIntegerInput();
     }
 
-    switch (input) {
+    switch (choice) {
         case 1:
-            break;
+            return 5;
         case 2:
-            break;
+            return 6;
         case 3:
-            mainMenu();
-            break;
-        default:
-            roomMenu();
-            break;
+            return 1;
     }
+
+    return 2;
 }
 
-/* Prints the customer menu. */
-void customerMenu() {
-    clearConsole();
-    // To be implemented...
-
+int reportMenu() {
+    // To be implemented
+    return 1;
 }
 
-/* Prints the financial report menu. */
-void reportMenu() {
-    clearConsole();
-    // To be implemented...
-}
-
-/* Some easter eggs here :P */
-void hiddenMenu() {
-    clearConsole();
-    // To be implemented...
-}
-
-/* Prints the main menu. */
-void mainMenu() {
-    clearConsole();
-
+int mainMenu() {
     printf("\t\tWelcome to Hotel Manager\t\t\n\n\n");
     printf("\t1. Update room information\n\n");
     printf("\t2. Customer check-in\n\n");
@@ -132,35 +120,48 @@ void mainMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    // Retrieve input
-    int input = retrieveIntegerInput();
-
-    // Keep prompting for input if input is out of range
-    while (input < 1 || input > 4) {
-        printf("Invalid input, please try again...\n");
-        input = retrieveIntegerInput();
+    int choice = retrieveIntegerInput();
+    while (choice < 0 || choice > 4) {
+        choice = retrieveIntegerInput();
     }
 
-    switch (input) {
+    switch (choice) {
         case 1:
-            roomMenu();
-            break;
+            return 2;
         case 2:
-            customerMenu();
-            break;
+            return 3;
         case 3:
-            reportMenu();
-            break;
+            return 4;
         case 4:
-            exit(0);
-        default:
-            mainMenu();
-            break;
+            return 0;
     }
+
+    return 1;
 }
 
 /* Where everything starts :P */
 int main(int argc, char *argv[]) {
-    mainMenu();
+
+    // Some initialization work
+    initRevenueArr();
+
+    int menuPt = 1;
+    while (menuPt) {
+        // First clear all previous output
+        clearConsole();
+
+        // Current menu
+        switch (menuPt) {
+            case 1:
+                menuPt = mainMenu();
+                break;
+            case 2:
+                menuPt = roomMenu();
+                break;
+            case 3:
+                menuPt = reportMenu();
+                break;
+        }
+    }
     return 0;
 }
