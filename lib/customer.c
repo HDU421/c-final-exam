@@ -23,10 +23,6 @@ void initRevenueArr() {
 /* Calculate total price for a specific check-in */
 long long int getPrice(room roomInfo, int priceType, long long int duration) {
 
-    if (validateRoomInfo(roomInfo) != SUCCESS) {
-        return validateRoomInfo(roomInfo);
-    }
-
     if (validatePriceType(priceType) != SUCCESS) {
         return validatePriceType(priceType);
     }
@@ -44,9 +40,7 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
         return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
     }
-    if (validateRoomInfo(roomInfo) != SUCCESS) {
-        return  validateRoomInfo(roomInfo);
-    }
+
     if (validatePriceType(priceType) != SUCCESS) {
         return validatePriceType(priceType);
     }

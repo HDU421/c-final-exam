@@ -15,31 +15,18 @@ int getRoomTypeCount() {
     return roomTypeCount;
 }
 
-int validateRoomType(int roomType) {
+bool validateRoomType(int roomType) {
     if (roomType < 0 || roomType >= roomTypeCount) {
-        return ERROR_INVALID_ROOM_TYPE;
+        return false;
     }
-    return SUCCESS;
+    return true;
 }
 
-int validatePriceType(int priceType) {
+bool validatePriceType(int priceType) {
     if (priceType != HOUR_PRICE && priceType != DAY_PRICE) {
-        return ERROR_INVALID_PRICE_TYPE;
+        return false;
     }
-    return SUCCESS;
-}
-
-int validateRoomInfo(room roomInfo) {
-
-    if (roomInfo.price[HOUR_PRICE] <= 0) {
-        return ERROR_INVALID_HOUR_PRICE;
-    }
-
-    if (roomInfo.price[DAY_PRICE] <= 0) {
-        return ERROR_INVALID_DAY_PRICE;
-    }
-
-    return SUCCESS;
+    return true;
 }
 
 room getRoomInfo(int roomType) {
@@ -61,10 +48,6 @@ int addRoomInfo(room newInfo) {
 }
 
 int updateRoomInfo(int roomType, room newInfo) {
-
-    if (validateRoomInfo(newInfo) != SUCCESS) {
-        return validateRoomInfo(newInfo);
-    }
 
     if (!validateRoomType(roomType)) {
         return ERROR_INVALID_ROOM_TYPE;

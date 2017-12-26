@@ -15,15 +15,14 @@
 #define DAY_PRICE 1
 
 typedef struct _Room {
-    int price[2];
+    unsigned int price[2];
     char roomName[MAX_ROOM_NAME_LENGTH];
     bool isAvailable;
 } room;
 
 int getRoomTypeCount();
-int validateRoomType(int roomType);
-int validatePriceType(int priceType);
-int validateRoomInfo(room roomInfo);
+bool validateRoomType(int roomType);
+bool validatePriceType(int priceType);
 room getRoomInfo(int roomType);
 int addRoomInfo(room newInfo);
 int updateRoomInfo(int roomType, room newInfo);

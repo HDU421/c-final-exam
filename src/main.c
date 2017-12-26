@@ -1,14 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "customer.h"
 #include "misc.h"
 
-
 /* Returns a trimmed string */
+
 char *trim(char *str) {
-    char *result;
+
+    char *result = (char*)malloc(BUFFER_LENGTH + 1);
 
     // Remove blank spaces at the head of the string
     int pt = 0;
@@ -23,26 +25,30 @@ char *trim(char *str) {
         result[pt] = '\0';
     }
 
+    free(str);
     return result;
 }
 
-/* Handle integer input */
-long long int retrieveIntegerInput() {
-    // Declare a string as input buffer
-    char buffer[BUFFER_LENGTH];
 
-    while (fgets(buffer, sizeof(buffer), stdin)) {
+/* Get user input and return the input as a string */
+char *getUserInput() {
 
-        // Flush stdin and prompt for input again
-        // if user input exceeds buffer size.
-        if (strlen(buffer) == BUFFER_LENGTH - 1) {
-            flushStdin();
+    char *buffer = (char*)malloc(BUFFER_LENGTH + 1);
+
+    while (fgets(buffer, BUFFER_LENGTH, stdin)) {
+
+        // Put the pointer at the end of stdin buffer
+        fseek (stdin, 0, SEEK_END);
+
+        // Flush stdin if buffer is not empty
+        if (ftell(stdin) > 0) {
             printf("Input is too long, please try again...\n");
+            flushStdin();
             continue;
         }
 
-        // Escape blank spaces
-        strcpy(buffer, trim(buffer));
+        // Trim user input
+        buffer = trim(buffer);
 
         // If input is blank, backspace and await input again
         if (strlen(buffer) == 0) {
@@ -50,117 +56,78 @@ long long int retrieveIntegerInput() {
             continue;
         }
 
-        // Ensure that the retrieved value is smaller than int32.
-        if (strlen(buffer) > INT32_LENGTH) {
-            printf("Input value is too big, please try again...\n");
-            continue;
-        }
-
-        // Validate if user input is an integer
-        bool isNumber = true;
-        for (int i = 0; i < strlen(buffer); i++) {
-            if (!isdigit(buffer[i])) {
-                isNumber = false;
-                break;
-            }
-        }
-        if (!isNumber) {
-            printf("Input should only contain digits, please try again...\n");
-            continue;
-        }
-
-        // Return the extracted value
-        int result;
-        sscanf(buffer, "%d", &result);
-        return result;
+        return buffer;
     }
 }
 
-/* Functions below prints the according menu
- * and return the id of the next menu */
+/* Room menu */
 int roomMenu() {
     printf("\t\tRoom Menu\t\t\n\n\n");
     printf("\t1. Add new room information\n\n");
     printf("\t2. Edit existing room information\n\n");
-    printf("\t3. Back...\n\n");
+    printf("\t3. Toggle room availability\n\n");
+    printf("\t0. Back...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    int choice = retrieveIntegerInput();
-    while (choice < 0 || choice > 3) {
-        choice = retrieveIntegerInput();
+    // Get user's choice
+    unsigned int choice;
+    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 3) {
+        printf("Invalid input, please try again...\n");
     }
 
+    // Guide user to destination menus
     switch (choice) {
         case 1:
             return ADD_ROOM_MENU;
         case 2:
             return EDIT_ROOM_MENU;
         case 3:
+            return MARK_ROOM_MENU;
+        case 0:
             return MAIN_MENU;
     }
 
-    return 2;
+    return ROOM_MENU;
 }
 
 int addRoomMenu() {
     printf("\t\tAdd new room\t\t\n\n");
-    printf("Please enter room name:\n");
-
-    char buffer[BUFFER_LENGTH];
-    while (fgets(buffer, sizeof(buffer), stdin)) {
-        if (strlen(buffer) == BUFFER_LENGTH - 1) {
-            flushStdin();
-            printf("Room name too long, please try again...\n");
-            continue;
-        } else {
-            strcpy(buffer, trim(buffer));
-            break;
-        }
-    }
 
     room newRoomInfo;
-    newRoomInfo.isAvailable = true;
-    strcpy(newRoomInfo.roomName, buffer);
-    printf("Please input hourly price:\n");
-    newRoomInfo.price[HOUR_PRICE] = retrieveIntegerInput();
-    printf("Please input daily price:\n");
-    newRoomInfo.price[DAY_PRICE] = retrieveIntegerInput();
+    printf("Please enter room name:\n");
+    strcpy(newRoomInfo.roomName, getUserInput());
 
-    if (validateRoomInfo(newRoomInfo)) {
-        if (addRoomInfo(newRoomInfo) == SUCCESS) {
-            printf("\nRoom successfully added!\n");
-        } else {
-            printf("\nInternal Error!\n");
-        }
-    } else {
-        printf("\nInvalid room info. Press ENTER to try again...\n");
-        getchar();
-        return ADD_ROOM_MENU;
+    printf("Please input price (HOURLY/DAILY):\n");
+    while (sscanf(getUserInput(), "%u/%u", &newRoomInfo.price[HOUR_PRICE], &newRoomInfo.price[DAY_PRICE]) < 2) {
+        printf("\nInvalid room price, please try again...\n");
     }
 
-    printf("\tNext step?\n\n");
+    if (addRoomInfo(newRoomInfo) == SUCCESS) {
+        printf("\nRoom successfully added!\n\n");
+    } else {
+        printf("\nInternal Error!\n\n");
+    }
+
+    printf("\t\tNext step?\t\t\n\n");
     printf("\t1. Add another room\n\n");
-    printf("\t2. Back...\n\n");
-    printf("\t3. Back to main menu...\n\n");
+    printf("\t0. Back...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    int choice = retrieveIntegerInput();
-    while (choice < 0 || choice > 3) {
-        choice = retrieveIntegerInput();
+    unsigned int choice;
+    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 1) {
+        printf("Invalid input, please try again...\n");
     }
 
     switch (choice) {
         case 1:
             return ADD_ROOM_MENU;
-        case 2:
+        case 0:
             return ROOM_MENU;
-        case 3:
-            return MAIN_MENU;
     }
 
-    return MAIN_MENU;
+    return ADD_ROOM_MENU;
 
 }
 
@@ -178,22 +145,20 @@ int editRoomMenu() {
     printf("\tExisting rooms:\t\n\n");
     for (int i = 0; i < typeCount; i++) {
         room roomInfo = getRoomInfo(i);
-        printf("\t%d. %s - Hourly: %d, Daily: %d, availability: %s\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE], (roomInfo.isAvailable) ? "true" : "false");
+        printf("\t%u. %s - Hourly: %u, Daily: %u, availability: %s\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE], (roomInfo.isAvailable) ? "true" : "false");
     }
 
     printf("Please select a room type from above to get started:\n");
-    int roomChoice = retrieveIntegerInput() - 1;
-    if (roomChoice == -1) {
-        return ROOM_MENU;
+
+    unsigned int roomChoice;
+    while (sscanf(getUserInput(), "%u", &roomChoice) < 1 || (!validateRoomType(roomChoice - 1) || !getRoomInfo(roomChoice - 1).isAvailable)) {
+        if (roomChoice == 0) {
+            return ROOM_MENU;
+        }
+        printf("Room is not available, please try again...\n");
     }
-    while (!validateRoomType(roomChoice) || !getRoomInfo(roomChoice).isAvailable) {
-        printf("Invalid choice, please try again...\n");
-        roomChoice = retrieveIntegerInput() - 1;
-    }
 
-
-
-    return MAIN_MENU;
+    return EDIT_ROOM_MENU;
 }
 
 int customerMenu() {
@@ -210,7 +175,7 @@ int customerMenu() {
                 printf("\tAvailable room choices:\t\n\n");
                 hasAvailableRoom = true;
             }
-            printf("\t%d. %s - Hourly: %d, Daily: %d\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE]);
+            printf("\t%u. %s - Hourly: %u, Daily: %u\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE]);
         }
     }
 
@@ -222,69 +187,59 @@ int customerMenu() {
     }
 
     printf("Please select a room type from above to get started:\n");
-    int roomChoice = retrieveIntegerInput() - 1;
-    if (roomChoice == -1) {
-        return MAIN_MENU;
-    }
-    while (!validateRoomType(roomChoice) || !getRoomInfo(roomChoice).isAvailable) {
-        printf("Invalid choice, please try again...\n");
-        roomChoice = retrieveIntegerInput() - 1;
+    unsigned int roomChoice;
+    while (sscanf(getUserInput(), "%u", &roomChoice) < 1 || (!validateRoomType(roomChoice - 1) || !getRoomInfo(roomChoice - 1).isAvailable)) {
+        if (roomChoice == 0) {
+            return MAIN_MENU;
+        }
+        printf("Room is not available, please try again...\n");
     }
 
-    return MAIN_MENU;
+    return CUSTOMER_MENU;
 }
 
 int reportMenu() {
     printf("\t\tFinancial Report Menu\t\t\n\n\n");
-    printf("Please enter year (Enter 0 to go back):\n");
 
-    int year = retrieveIntegerInput();
-    while (year < YEAR_MIN || year > YEAR_MAX) {
+    // Prompt for year and month
+    printf("Please input year and month with the format of MM/YYYY (Enter 0 to go back):\n");
+    unsigned int year, month;
+    while (sscanf(getUserInput(), "%2u/%4u", &month, &year) < 2 || year < YEAR_MIN || year > YEAR_MAX || month < MONTH_MIN || month > MONTH_MAX) {
         if (year == 0) {
-            return 1;
+            return MAIN_MENU;
         }
-        printf("Only years between 1970 and 9999 are supported. Please try again... \n");
-        year = retrieveIntegerInput();
-    }
-
-    printf("Please enter month (Enter 0 to go back):\n");
-    int month = retrieveIntegerInput();
-    while (month < MONTH_MIN || month > MONTH_MAX) {
-        if (month == 0) {
-            return 1;
-        }
-        printf("Only months between 1 and 12 are supported. Please try again... \n");
-        month = retrieveIntegerInput();
+        printf("Only years between 1970 and 9999 and months between 1 and 12 are supported. Please try again... \n");
     }
 
     // Retrieve financial report content
     revenue result = getReport(year, month);
 
+    // Print financial report
     clearConsole();
 
-    printf("\t\tFinancial Report of %d/%d\t\t\n\n\n", month, year);
-    printf("\tExpected:\t%d\n", result.expected);
-    printf("\tReal:\t\t%d\n", result.real);
+    printf("\t\tFinancial Report of %u/%u\t\t\n\n\n", month, year);
+    printf("\tExpected:\t%u\n", result.expected);
+    printf("\tReal:\t\t%u\n", result.real);
     printf("\n\n");
-    printf("\tNext step?\n\n");
+    printf("\t\tNext step?\t\t\n\n");
     printf("\t1. Get financial report of another month\n\n");
-    printf("\t2. Go back...\n\n");
+    printf("\t0. Go back...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    int choice = retrieveIntegerInput();
-    while (choice < 0 || choice > 2) {
-        choice = retrieveIntegerInput();
+    unsigned int choice;
+    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 1) {
+        printf("Invalid input, please try again...\n");
     }
 
     switch (choice) {
         case 1:
             return REPORT_MENU;
-        case 2:
+        case 0:
             return MAIN_MENU;
     }
 
-    return MAIN_MENU;
+    return REPORT_MENU;
 }
 
 int mainMenu() {
@@ -292,13 +247,13 @@ int mainMenu() {
     printf("\t1. Update room information\n\n");
     printf("\t2. Customer check-in\n\n");
     printf("\t3. View financial report\n\n");
-    printf("\t4. Exit...\n\n");
+    printf("\t0. Exit...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    int choice = retrieveIntegerInput();
-    while (choice < 0 || choice > 4) {
-        choice = retrieveIntegerInput();
+    unsigned int choice;
+    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 3) {
+        printf("Invalid input, please try again...\n");
     }
 
     switch (choice) {
@@ -308,7 +263,7 @@ int mainMenu() {
             return CUSTOMER_MENU;
         case 3:
             return REPORT_MENU;
-        case 4:
+        case 0:
             return EXIT_PROGRAM;
     }
 
@@ -320,12 +275,6 @@ int main(int argc, char *argv[]) {
 
     // Some initialization work
     initRevenueArr();
-    room test;
-    test.isAvailable = true;
-    test.price[HOUR_PRICE] = 10;
-    test.price[DAY_PRICE] = 100;
-    strcpy(test.roomName, "TEST");
-    addRoomInfo(test);
 
     int menuPt = 1;
     while (menuPt) {
