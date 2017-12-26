@@ -55,11 +55,6 @@ room getRoomInfo(int roomType) {
 }
 
 int addRoomInfo(room newInfo) {
-
-    if (validateRoomInfo(newInfo) != SUCCESS) {
-        return validateRoomInfo(newInfo);
-    }
-
     roomArr[roomTypeCount++] = newInfo;
 
     return SUCCESS;

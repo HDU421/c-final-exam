@@ -93,14 +93,107 @@ int roomMenu() {
 
     switch (choice) {
         case 1:
-            break;
+            return ADD_ROOM_MENU;
         case 2:
-            break;
+            return EDIT_ROOM_MENU;
         case 3:
             return MAIN_MENU;
     }
 
     return 2;
+}
+
+int addRoomMenu() {
+    printf("\t\tAdd new room\t\t\n\n");
+    printf("Please enter room name:\n");
+
+    char buffer[BUFFER_LENGTH];
+    while (fgets(buffer, sizeof(buffer), stdin)) {
+        if (strlen(buffer) == BUFFER_LENGTH - 1) {
+            flushStdin();
+            printf("Room name too long, please try again...\n");
+            continue;
+        } else {
+            strcpy(buffer, trim(buffer));
+            break;
+        }
+    }
+
+    room newRoomInfo;
+    newRoomInfo.isAvailable = true;
+    strcpy(newRoomInfo.roomName, buffer);
+    printf("Please input hourly price:\n");
+    newRoomInfo.price[HOUR_PRICE] = retrieveIntegerInput();
+    printf("Please input daily price:\n");
+    newRoomInfo.price[DAY_PRICE] = retrieveIntegerInput();
+
+    if (validateRoomInfo(newRoomInfo)) {
+        if (addRoomInfo(newRoomInfo) == SUCCESS) {
+            printf("\nRoom successfully added!\n");
+        } else {
+            printf("\nInternal Error!\n");
+        }
+    } else {
+        printf("\nInvalid room info. Press ENTER to try again...\n");
+        getchar();
+        return ADD_ROOM_MENU;
+    }
+
+    printf("\tNext step?\n\n");
+    printf("\t1. Add another room\n\n");
+    printf("\t2. Back...\n\n");
+    printf("\t3. Back to main menu...\n\n");
+    printf("\n");
+    printf("Please select an option to get started:\n");
+
+    int choice = retrieveIntegerInput();
+    while (choice < 0 || choice > 3) {
+        choice = retrieveIntegerInput();
+    }
+
+    switch (choice) {
+        case 1:
+            return ADD_ROOM_MENU;
+        case 2:
+            return ROOM_MENU;
+        case 3:
+            return MAIN_MENU;
+    }
+
+    return MAIN_MENU;
+
+}
+
+int editRoomMenu() {
+    printf("\t\tEdit existing room\t\t\n\n");
+
+    int typeCount = getRoomTypeCount();
+    if (typeCount == 0) {
+        printf("No rooms are available, please go back and add some...\n");
+        printf("Press ENTER to continue...\n");
+        getchar();
+        return MAIN_MENU;
+    }
+
+    printf("\tExisting rooms:\t\n\n");
+    for (int i = 0; i < typeCount; i++) {
+        room roomInfo = getRoomInfo(i);
+        printf("\t%d. %s - Hourly: %d, Daily: %d, availability: %s\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE], (roomInfo.isAvailable) ? "true" : "false");
+    }
+
+    printf("Please select a room type from above to get started:\n");
+    int roomChoice = retrieveIntegerInput() - 1;
+    if (roomChoice == -1) {
+        return ROOM_MENU;
+    }
+    while (!validateRoomType(roomChoice) || !getRoomInfo(roomChoice).isAvailable) {
+        printf("Invalid choice, please try again...\n");
+        roomChoice = retrieveIntegerInput() - 1;
+    }
+
+
+
+    return MAIN_MENU;
 }
 
 int customerMenu() {
@@ -125,17 +218,20 @@ int customerMenu() {
         printf("No rooms are available, please go back and add some...\n");
         printf("Press ENTER to continue...");
         getchar();
-        return 1;
+        return MAIN_MENU;
     }
 
     printf("Please select a room type from above to get started:\n");
-    int roomChoice = retrieveIntegerInput();
+    int roomChoice = retrieveIntegerInput() - 1;
+    if (roomChoice == -1) {
+        return MAIN_MENU;
+    }
     while (!validateRoomType(roomChoice) || !getRoomInfo(roomChoice).isAvailable) {
         printf("Invalid choice, please try again...\n");
-        roomChoice = retrieveIntegerInput();
+        roomChoice = retrieveIntegerInput() - 1;
     }
 
-    return 1;
+    return MAIN_MENU;
 }
 
 int reportMenu() {
@@ -188,7 +284,7 @@ int reportMenu() {
             return MAIN_MENU;
     }
 
-    return 1;
+    return MAIN_MENU;
 }
 
 int mainMenu() {
@@ -216,7 +312,7 @@ int mainMenu() {
             return EXIT_PROGRAM;
     }
 
-    return 1;
+    return MAIN_MENU;
 }
 
 /* Where everything starts :P */
@@ -243,6 +339,12 @@ int main(int argc, char *argv[]) {
                 break;
             case ROOM_MENU:
                 menuPt = roomMenu();
+                break;
+            case ADD_ROOM_MENU:
+                menuPt = addRoomMenu();
+                break;
+            case EDIT_ROOM_MENU:
+                menuPt = editRoomMenu();
                 break;
             case CUSTOMER_MENU:
                 menuPt = customerMenu();

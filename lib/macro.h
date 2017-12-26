@@ -18,9 +18,10 @@
 #define EXIT_PROGRAM 0
 #define MAIN_MENU 1
 #define ROOM_MENU 2
-#define CUSTOMER_MENU 3
-#define REPORT_MENU 4
-
+#define ADD_ROOM_MENU 3
+#define EDIT_ROOM_MENU 4
+#define CUSTOMER_MENU 5
+#define REPORT_MENU 6
 
 // Datetime
 #define YEAR_MIN 1970
