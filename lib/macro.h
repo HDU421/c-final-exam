@@ -5,14 +5,22 @@
 #ifndef C_FINAL_EXAM_MACRO_H
 #define C_FINAL_EXAM_MACRO_H
 
+// Process bool type
+#include <stdbool.h>
+#define bool _Bool
+
 // Input buffer
 #define BUFFER_LENGTH 100
 #define INT32_LENGTH 9
 #define INT64_LENGTH 18
 
-// Process bool type
-#include <stdbool.h>
-#define bool _Bool
+// Menu
+#define EXIT_PROGRAM 0
+#define MAIN_MENU 1
+#define ROOM_MENU 2
+#define CUSTOMER_MENU 3
+#define REPORT_MENU 4
+
 
 // Datetime
 #define YEAR_MIN 1970

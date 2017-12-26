@@ -11,6 +11,10 @@ room roomArr[MAX_ROOM_NUMBER];
 
 int roomTypeCount = 0;
 
+int getRoomTypeCount() {
+    return roomTypeCount;
+}
+
 int validateRoomType(int roomType) {
     if (roomType < 0 || roomType >= roomTypeCount) {
         return ERROR_INVALID_ROOM_TYPE;

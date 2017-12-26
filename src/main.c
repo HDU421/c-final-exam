@@ -1,10 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "customer.h"
-#include "macro.h"
 #include "misc.h"
 
 
@@ -79,9 +77,8 @@ long long int retrieveIntegerInput() {
 }
 
 /* Functions below prints the according menu
- * and returns the next menu */
+ * and return the id of the next menu */
 int roomMenu() {
-
     printf("\t\tRoom Menu\t\t\n\n\n");
     printf("\t1. Add new room information\n\n");
     printf("\t2. Edit existing room information\n\n");
@@ -96,18 +93,101 @@ int roomMenu() {
 
     switch (choice) {
         case 1:
-            return 5;
+            break;
         case 2:
-            return 6;
+            break;
         case 3:
-            return 1;
+            return MAIN_MENU;
     }
 
     return 2;
 }
 
+int customerMenu() {
+    printf("\t\tCustomer Menu\t\t\n\n\n");
+
+    int typeCount = getRoomTypeCount();
+
+    bool hasAvailableRoom = false;
+    for (int i = 0; i < typeCount; i++) {
+
+        room roomInfo = getRoomInfo(i);
+        if (roomInfo.isAvailable) {
+            if (!hasAvailableRoom) {
+                printf("\tAvailable room choices:\t\n\n");
+                hasAvailableRoom = true;
+            }
+            printf("\t%d. %s - Hourly: %d, Daily: %d\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE]);
+        }
+    }
+
+    if (!hasAvailableRoom) {
+        printf("No rooms are available, please go back and add some...\n");
+        printf("Press ENTER to continue...");
+        getchar();
+        return 1;
+    }
+
+    printf("Please select a room type from above to get started:\n");
+    int roomChoice = retrieveIntegerInput();
+    while (!validateRoomType(roomChoice) || !getRoomInfo(roomChoice).isAvailable) {
+        printf("Invalid choice, please try again...\n");
+        roomChoice = retrieveIntegerInput();
+    }
+
+    return 1;
+}
+
 int reportMenu() {
-    // To be implemented
+    printf("\t\tFinancial Report Menu\t\t\n\n\n");
+    printf("Please enter year (Enter 0 to go back):\n");
+
+    int year = retrieveIntegerInput();
+    while (year < YEAR_MIN || year > YEAR_MAX) {
+        if (year == 0) {
+            return 1;
+        }
+        printf("Only years between 1970 and 9999 are supported. Please try again... \n");
+        year = retrieveIntegerInput();
+    }
+
+    printf("Please enter month (Enter 0 to go back):\n");
+    int month = retrieveIntegerInput();
+    while (month < MONTH_MIN || month > MONTH_MAX) {
+        if (month == 0) {
+            return 1;
+        }
+        printf("Only months between 1 and 12 are supported. Please try again... \n");
+        month = retrieveIntegerInput();
+    }
+
+    // Retrieve financial report content
+    revenue result = getReport(year, month);
+
+    clearConsole();
+
+    printf("\t\tFinancial Report of %d/%d\t\t\n\n\n", month, year);
+    printf("\tExpected:\t%d\n", result.expected);
+    printf("\tReal:\t\t%d\n", result.real);
+    printf("\n\n");
+    printf("\tNext step?\n\n");
+    printf("\t1. Get financial report of another month\n\n");
+    printf("\t2. Go back...\n\n");
+    printf("\n");
+    printf("Please select an option to get started:\n");
+
+    int choice = retrieveIntegerInput();
+    while (choice < 0 || choice > 2) {
+        choice = retrieveIntegerInput();
+    }
+
+    switch (choice) {
+        case 1:
+            return REPORT_MENU;
+        case 2:
+            return MAIN_MENU;
+    }
+
     return 1;
 }
 
@@ -127,13 +207,13 @@ int mainMenu() {
 
     switch (choice) {
         case 1:
-            return 2;
+            return ROOM_MENU;
         case 2:
-            return 3;
+            return CUSTOMER_MENU;
         case 3:
-            return 4;
+            return REPORT_MENU;
         case 4:
-            return 0;
+            return EXIT_PROGRAM;
     }
 
     return 1;
@@ -144,6 +224,12 @@ int main(int argc, char *argv[]) {
 
     // Some initialization work
     initRevenueArr();
+    room test;
+    test.isAvailable = true;
+    test.price[HOUR_PRICE] = 10;
+    test.price[DAY_PRICE] = 100;
+    strcpy(test.roomName, "TEST");
+    addRoomInfo(test);
 
     int menuPt = 1;
     while (menuPt) {
@@ -152,14 +238,20 @@ int main(int argc, char *argv[]) {
 
         // Current menu
         switch (menuPt) {
-            case 1:
+            case MAIN_MENU:
                 menuPt = mainMenu();
                 break;
-            case 2:
+            case ROOM_MENU:
                 menuPt = roomMenu();
                 break;
-            case 3:
+            case CUSTOMER_MENU:
+                menuPt = customerMenu();
+                break;
+            case REPORT_MENU:
                 menuPt = reportMenu();
+                break;
+            default:
+                menuPt = MAIN_MENU;
                 break;
         }
     }

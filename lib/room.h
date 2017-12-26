@@ -20,6 +20,7 @@ typedef struct _Room {
     bool isAvailable;
 } room;
 
+int getRoomTypeCount();
 int validateRoomType(int roomType);
 int validatePriceType(int priceType);
 int validateRoomInfo(room roomInfo);
