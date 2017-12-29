@@ -6,6 +6,7 @@
 //
 
 #include "customer.h"
+#include "error.h"
 
 // struct "revenue" is defined in "customer.h"
 revenue revenueArr[YEAR_COUNT][MONTH_COUNT];
@@ -23,26 +24,30 @@ void initRevenueArr() {
 /* Calculate total price for a specific check-in */
 long long int getPrice(room roomInfo, int priceType, long long int duration) {
 
-    if (validatePriceType(priceType) != SUCCESS) {
-        return validatePriceType(priceType);
+    if (!validatePriceType(priceType)) {
+        createError("Invalid price type!");
+        return -1;
     }
 
     if (duration <= 0) {
-        return ERROR_INVALID_DURATION;
+        createError("Invalid duration!");
+        return -1;
     }
 
     return roomInfo.price[priceType] * duration;
 }
 
 /* Check in and update revenue */
-int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
+void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
+        createError("End datetime smaller than start datetime.");
+        return;
     }
 
-    if (validatePriceType(priceType) != SUCCESS) {
-        return validatePriceType(priceType);
+    if (!validatePriceType(priceType)) {
+        createError("Invalid priceType.");
+        return;
     }
 
     int cntYear = startDatetime.year - 1970, cntMonth = startDatetime.month - 1;
@@ -83,7 +88,6 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
                 price = getPrice(roomInfo, priceType, getMonthDayCount(cntMonth + 1, cntYear + 1970));
             }
 
-
             revenueArr[cntYear][cntMonth].expected += price;
 
         }
@@ -96,11 +100,20 @@ int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDa
             revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected+= price;
         }
     }
-
-    return SUCCESS;
 }
 
 /* Return financial report for a specific month */
 revenue getReport(int year, int month) {
+
+    if (year < YEAR_MIN || year > YEAR_MAX) {
+        createError("Invalid year!");
+        return revenueArr[0][0];
+    }
+
+    if (month < MONTH_MIN || month > MONTH_MAX) {
+        createError("Invalid month!");
+        return revenueArr[0][0];
+    }
+
     return revenueArr[year - 1970][month - 1];
 }

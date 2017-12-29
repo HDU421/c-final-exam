@@ -2,12 +2,17 @@
 // Created by codgician on 12/22/2017.
 //
 
-#ifndef C_FINAL_EXAM_MACRO_H
-#include "macro.h"
-#endif //C_FINAL_EXAM_MACRO_H
-
 #ifndef C_FINAL_EXAM_DATETIME_H
 #define C_FINAL_EXAM_DATETIME_H
+
+#define YEAR_MIN 1970
+#define YEAR_MAX 9999
+#define YEAR_COUNT 8030
+#define MONTH_MIN 1
+#define MONTH_MAX 12
+#define MONTH_COUNT 12
+#define HOUR_MIN 0
+#define HOUR_MAX 23
 
 typedef struct _Datetime {
     int year;
@@ -16,7 +21,6 @@ typedef struct _Datetime {
     int hour;
 } datetime;
 
-int validateDatetime(datetime t);
 int cmpDatetime(datetime a, datetime b);
 int getMonthDayCount(int month, int year);
 long long int getIntervalDays(datetime startDatetime, datetime endDatetime);

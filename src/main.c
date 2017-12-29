@@ -1,64 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "customer.h"
-#include "misc.h"
+#include "error.h"
+#include "io.h"
 
-/* Returns a trimmed string */
-
-char *trim(char *str) {
-
-    char *result = (char*)malloc(BUFFER_LENGTH + 1);
-
-    // Remove blank spaces at the head of the string
-    int pt = 0;
-    while (str[pt] == ' ') {
-        pt++;
-    }
-    strncpy(result, str + pt, strlen(str) - pt + 1);
-
-    // Remove blank spaces and '\n' at the end of the string
-    pt = strlen(result) - 1;
-    while (result[pt] == ' ' || result[pt] == '\n') {
-        result[pt] = '\0';
-    }
-
-    free(str);
-    return result;
-}
-
-
-/* Get user input and return the input as a string */
-char *getUserInput() {
-
-    char *buffer = (char*)malloc(BUFFER_LENGTH + 1);
-
-    while (fgets(buffer, BUFFER_LENGTH, stdin)) {
-
-        // Put the pointer at the end of stdin buffer
-        fseek (stdin, 0, SEEK_END);
-
-        // Flush stdin if buffer is not empty
-        if (ftell(stdin) > 0) {
-            printf("Input is too long, please try again...\n");
-            flushStdin();
-            continue;
-        }
-
-        // Trim user input
-        buffer = trim(buffer);
-
-        // If input is blank, backspace and await input again
-        if (strlen(buffer) == 0) {
-            printf("\b\r");
-            continue;
-        }
-
-        return buffer;
-    }
-}
+#define EXIT_PROGRAM 0
+#define MAIN_MENU 1
+#define ROOM_MENU 2
+#define ADD_ROOM_MENU 3
+#define EDIT_ROOM_MENU 4
+#define MARK_ROOM_MENU 5
+#define CUSTOMER_MENU 6
+#define REPORT_MENU 7
 
 /* Room menu */
 int roomMenu() {
@@ -70,13 +25,7 @@ int roomMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    // Get user's choice
-    unsigned int choice;
-    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 3) {
-        printf("Invalid input, please try again...\n");
-    }
-
-    // Guide user to destination menus
+    unsigned int choice = getMenuChoice(0, 3);
     switch (choice) {
         case 1:
             return ADD_ROOM_MENU;
@@ -95,18 +44,32 @@ int addRoomMenu() {
     printf("\t\tAdd new room\t\t\n\n");
 
     room newRoomInfo;
-    printf("Please enter room name:\n");
-    strcpy(newRoomInfo.roomName, getUserInput());
+    newRoomInfo.isAvailable = true;
+    printf("Please enter room name (Enter 0 to go back):\n");
+    strncpy(newRoomInfo.roomName, getUserInput(), sizeof(newRoomInfo.roomName));
 
-    printf("Please input price (HOURLY/DAILY):\n");
-    while (sscanf(getUserInput(), "%u/%u", &newRoomInfo.price[HOUR_PRICE], &newRoomInfo.price[DAY_PRICE]) < 2) {
-        printf("\nInvalid room price, please try again...\n");
+    // Prompt if input is blank
+    while (strlen(newRoomInfo.roomName) == 0) {
+        printf("\b\r");
+        strncpy(newRoomInfo.roomName, getUserInput(), sizeof(newRoomInfo.roomName));
     }
 
-    if (addRoomInfo(newRoomInfo) == SUCCESS) {
-        printf("\nRoom successfully added!\n\n");
+    // Return to room menu if user input is "0"
+    if (!strcmp(newRoomInfo.roomName, "0")) {
+        return ROOM_MENU;
+    }
+
+    printf("Please input price (HOURLY/DAILY, 0 if such type is not available):\n");
+    while (sscanf(getUserInput(), "%u/%u", &newRoomInfo.price[HOUR_PRICE], &newRoomInfo.price[DAY_PRICE]) < 2 || (newRoomInfo.price[HOUR_PRICE] == 0 && newRoomInfo.price[DAY_PRICE] == 0)) {
+        printf("Invalid room price, please try again...\n");
+    }
+
+    addRoomInfo(newRoomInfo);
+    if (errorStatus) {
+        printf("\nFailed to add room...\n\n");
+        clearError();
     } else {
-        printf("\nInternal Error!\n\n");
+        printf("\nRoom successfully added!\n\n");
     }
 
     printf("\t\tNext step?\t\t\n\n");
@@ -115,11 +78,7 @@ int addRoomMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    unsigned int choice;
-    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 1) {
-        printf("Invalid input, please try again...\n");
-    }
-
+    unsigned int choice = getMenuChoice(0, 1);
     switch (choice) {
         case 1:
             return ADD_ROOM_MENU;
@@ -134,65 +93,99 @@ int addRoomMenu() {
 int editRoomMenu() {
     printf("\t\tEdit existing room\t\t\n\n");
 
-    int typeCount = getRoomTypeCount();
-    if (typeCount == 0) {
-        printf("No rooms are available, please go back and add some...\n");
+    bool result = printRoomChoices(false);
+    if (!result) {
+        printf("Press ENTER to continue...\n");
+        getchar();
+        return ROOM_MENU;
+    }
+
+    printf("\nPlease select a room type from above to get started:\n");
+    int roomChoice = getRoomChoice(false);
+    if (roomChoice == 0) {
+        return ROOM_MENU;
+    }
+
+    clearConsole();
+    room roomInfo = getRoomInfo(roomChoice - 1);
+    if (errorStatus) {
+        printf("Failed to retrieve room information!");
+        clearError();
         printf("Press ENTER to continue...\n");
         getchar();
         return MAIN_MENU;
     }
 
-    printf("\tExisting rooms:\t\n\n");
-    for (int i = 0; i < typeCount; i++) {
-        room roomInfo = getRoomInfo(i);
-        printf("\t%u. %s - Hourly: %u, Daily: %u, availability: %s\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE], (roomInfo.isAvailable) ? "true" : "false");
+    printf("\t\tEdit room #%u\t\t\n\n", roomChoice);
+    printf("\tCurrent information:\n");
+    printf("\tName: \t\t%s\n", roomInfo.roomName);
+    printf("\tPrice:\n");
+    printf("\t - Hourly: %u\n", roomInfo.price[HOUR_PRICE]);
+    printf("\t - Daily: %u\n", roomInfo.price[DAY_PRICE]);
+    printf("\n");
+
+    printf("Please enter new name (leave blank if you want to keep existing name: \n");
+    char *tmp = getUserInput();
+    if (strlen(tmp) > 0) {
+        strncpy(roomInfo.roomName, tmp, sizeof(roomInfo.roomName));
     }
 
-    printf("Please select a room type from above to get started:\n");
+    printf("Please enter new price (HOURLY/DAILY, 0 if such type is not available):\n");
+    tmp = getUserInput();
+    while (sscanf(tmp, "%u/%u", &roomInfo.price[HOUR_PRICE], &roomInfo.price[DAY_PRICE]) < 2 || (roomInfo.price[HOUR_PRICE] == 0 && roomInfo.price[DAY_PRICE] == 0)) {
+        printf("\nInvalid room price, please try again...\n");
+    }
 
-    unsigned int roomChoice;
-    while (sscanf(getUserInput(), "%u", &roomChoice) < 1 || (!validateRoomType(roomChoice - 1) || !getRoomInfo(roomChoice - 1).isAvailable)) {
-        if (roomChoice == 0) {
+    free(tmp);
+
+    updateRoomInfo(roomChoice - 1, roomInfo);
+    if (errorStatus) {
+        printf("\nFailed to update room!\n\n");
+        clearError();
+    } else {
+        printf("\nRoom successfully updated!\n\n");
+    }
+
+    printf("\t\tNext step?\t\t\n\n");
+    printf("\t1. Edit another room\n\n");
+    printf("\t0. Back...\n\n");
+    printf("\n");
+    printf("Please select an option to get started:\n");
+
+    unsigned int choice;
+    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 1) {
+        printf("Invalid input, please try again...\n");
+    }
+
+    switch (choice) {
+        case 1:
+            return EDIT_ROOM_MENU;
+        case 0:
             return ROOM_MENU;
-        }
-        printf("Room is not available, please try again...\n");
     }
 
     return EDIT_ROOM_MENU;
 }
 
+int markRoomMenu() {
+    return MAIN_MENU;
+}
+
 int customerMenu() {
     printf("\t\tCustomer Menu\t\t\n\n\n");
 
-    int typeCount = getRoomTypeCount();
-
-    bool hasAvailableRoom = false;
-    for (int i = 0; i < typeCount; i++) {
-
-        room roomInfo = getRoomInfo(i);
-        if (roomInfo.isAvailable) {
-            if (!hasAvailableRoom) {
-                printf("\tAvailable room choices:\t\n\n");
-                hasAvailableRoom = true;
-            }
-            printf("\t%u. %s - Hourly: %u, Daily: %u\n\n", i + 1, roomInfo.roomName, roomInfo.price[HOUR_PRICE], roomInfo.price[DAY_PRICE]);
-        }
-    }
-
-    if (!hasAvailableRoom) {
-        printf("No rooms are available, please go back and add some...\n");
-        printf("Press ENTER to continue...");
+    // Print available rooms (hide unavailable ones).
+    bool result = printRoomChoices(true);
+    if (!result) {
+        printf("Press ENTER to continue...\n");
         getchar();
         return MAIN_MENU;
     }
 
-    printf("Please select a room type from above to get started:\n");
-    unsigned int roomChoice;
-    while (sscanf(getUserInput(), "%u", &roomChoice) < 1 || (!validateRoomType(roomChoice - 1) || !getRoomInfo(roomChoice - 1).isAvailable)) {
-        if (roomChoice == 0) {
-            return MAIN_MENU;
-        }
-        printf("Room is not available, please try again...\n");
+    printf("\nPlease select a room type from above to get started:\n");
+    int roomChoice = getRoomChoice(false);
+    if (roomChoice == 0) {
+        return MAIN_MENU;
     }
 
     return CUSTOMER_MENU;
@@ -227,11 +220,7 @@ int reportMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    unsigned int choice;
-    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 1) {
-        printf("Invalid input, please try again...\n");
-    }
-
+    int choice = getMenuChoice(0, 1);
     switch (choice) {
         case 1:
             return REPORT_MENU;
@@ -244,18 +233,14 @@ int reportMenu() {
 
 int mainMenu() {
     printf("\t\tWelcome to Hotel Manager\t\t\n\n\n");
-    printf("\t1. Update room information\n\n");
+    printf("\t1. Manage room information\n\n");
     printf("\t2. Customer check-in\n\n");
     printf("\t3. View financial report\n\n");
     printf("\t0. Exit...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    unsigned int choice;
-    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 3) {
-        printf("Invalid input, please try again...\n");
-    }
-
+    int choice = getMenuChoice(0, 3);
     switch (choice) {
         case 1:
             return ROOM_MENU;
@@ -270,7 +255,7 @@ int mainMenu() {
     return MAIN_MENU;
 }
 
-/* Where everything starts :P */
+/* Acts like a menu selector :P */
 int main(int argc, char *argv[]) {
 
     // Some initialization work
@@ -294,6 +279,9 @@ int main(int argc, char *argv[]) {
                 break;
             case EDIT_ROOM_MENU:
                 menuPt = editRoomMenu();
+                break;
+            case MARK_ROOM_MENU:
+                menuPt = markRoomMenu();
                 break;
             case CUSTOMER_MENU:
                 menuPt = customerMenu();

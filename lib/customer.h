@@ -2,10 +2,6 @@
 // Created by codgician on 12/22/2017.
 //
 
-#ifndef C_FINAL_EXAM_MACRO_H
-#include "macro.h"
-#endif //C_FINAL_EXAM_MACRO_H
-
 #ifndef C_FINAL_EXAM_ROOM_H
 #include "room.h"
 #endif //C_FINAL_EXAM_ROOM_H
@@ -17,6 +13,9 @@
 #ifndef C_FINAL_EXAM_CUSTOMER_H
 #define C_FINAL_EXAM_CUSTOMER_H
 
+#define ERR_CUSTOMER_DURATION_INVALID -1
+#define ERR_
+
 typedef struct _Revenue {
     int expected;
     int real;
@@ -24,7 +23,7 @@ typedef struct _Revenue {
 
 void initRevenueArr();
 long long int getPrice(room roomInfo, int priceType, long long int duration);
-int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime);
+void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime);
 revenue getReport(int year, int month);
 
 #endif //C_FINAL_EXAM_CUSTOMER_H

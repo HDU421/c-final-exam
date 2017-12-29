@@ -5,6 +5,10 @@
 // that are related to room management.
 //
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "error.h"
 #include "room.h"
 
 room roomArr[MAX_ROOM_NUMBER];
@@ -31,29 +35,33 @@ bool validatePriceType(int priceType) {
 
 room getRoomInfo(int roomType) {
 
-    if (validateRoomType(roomType) != SUCCESS) {
-        // result.status = ERROR_INVALID_ROOM_TYPE;
-    } else {
-        // result.status = SUCCESS;
-        // result.content = roomArr[roomType];
+    // Create error if roomType is invalid
+    // and return an invalid result
+    if (!validateRoomType(roomType)) {
+        createError("Invalid room information.");
+        return roomArr[0];
     }
 
     return roomArr[roomType];
 }
 
-int addRoomInfo(room newInfo) {
-    roomArr[roomTypeCount++] = newInfo;
+void addRoomInfo(room newInfo) {
 
-    return SUCCESS;
+    // Create error if room number exceeds
+    if (roomTypeCount == MAX_ROOM_NUMBER) {
+        createError("Room Number exceeded!");
+        return;
+    }
+
+    roomArr[roomTypeCount++] = newInfo;
 }
 
-int updateRoomInfo(int roomType, room newInfo) {
+void updateRoomInfo(int roomType, room newInfo) {
 
     if (!validateRoomType(roomType)) {
-        return ERROR_INVALID_ROOM_TYPE;
+        createError("Invalid roomType!");
+        return;
     }
 
     roomArr[roomType] = newInfo;
-
-    return SUCCESS;
 }

@@ -5,6 +5,8 @@
 // that are related to datetime calculations.
 //
 
+#include "bool.h"
+#include "error.h"
 #include "datetime.h"
 
 // Days for each month
@@ -39,20 +41,20 @@ int getDayNumInYear(datetime t) {
 }
 
 /* Validate given datetime */
-int validateDatetime(datetime t) {
+bool validateDatetime(datetime t) {
     if (t.year < YEAR_MIN || t.year > YEAR_MAX) {
-        return ERROR_INVALID_YEAR;
+        return false;
     }
     if (t.month < MONTH_MIN || t.month > MONTH_MAX) {
-        return ERROR_INVALID_MONTH;
+        return false;
     }
     if (t.day > getMonthDayCount(t.month, t.year)) {
-        return ERROR_INVALID_DAY;
+        return false;
     }
     if (t.hour < HOUR_MIN || t.hour > HOUR_MAX) {
-        return ERROR_INVALID_HOUR;
+        return false;
     }
-    return SUCCESS;
+    return true;
 }
 
 /* Compare two given datetime
@@ -81,16 +83,14 @@ int cmpDatetime(datetime a, datetime b) {
 /* Get day count between two given datetimes */
 long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
-    if (validateDatetime(startDatetime) != SUCCESS) {
-        return validateDatetime(startDatetime);
-    }
-
-    if (validateDatetime(endDatetime) != SUCCESS) {
-        return validateDatetime(endDatetime);
+    if (!validateDatetime(startDatetime) || !validateDatetime(endDatetime)) {
+        // Error has already been created by validateDatetime()
+        return -1;
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
+        createError("End datetime smaller than start datetime.");
+        return -1;
     }
 
     long long int result = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
@@ -105,16 +105,13 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 /* Get hour count between two given datetime */
 long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
 
-    if (validateDatetime(startDatetime) != SUCCESS) {
-        return validateDatetime(startDatetime);
-    }
-
-    if (validateDatetime(endDatetime) != SUCCESS) {
-        return validateDatetime(endDatetime);
+    if (!validateDatetime(startDatetime) || !validateDatetime(endDatetime)) {
+        return -1;
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        return ERROR_START_DATETIME_LARGER_THAN_END_DATETIME;
+        createError("End datetime smaller than start datetime.");
+        return -1;
     }
 
     long long int result = endDatetime.hour - startDatetime.hour + getIntervalDays(startDatetime, endDatetime) * 24;
