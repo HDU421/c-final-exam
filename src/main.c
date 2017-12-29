@@ -25,7 +25,7 @@ int roomMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    unsigned int choice = getMenuChoice(0, 3);
+    int choice = getMenuChoice(0, 3);
     switch (choice) {
         case 1:
             return ADD_ROOM_MENU;
@@ -78,7 +78,7 @@ int addRoomMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    unsigned int choice = getMenuChoice(0, 1);
+    int choice = getMenuChoice(0, 1);
     switch (choice) {
         case 1:
             return ADD_ROOM_MENU;
