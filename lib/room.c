@@ -5,9 +5,6 @@
 // that are related to room management.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "error.h"
 #include "room.h"
 
@@ -34,7 +31,6 @@ bool validatePriceType(int priceType) {
 }
 
 room getRoomInfo(int roomType) {
-
     // Create error if roomType is invalid
     // and return an invalid result
     if (!validateRoomType(roomType)) {
@@ -46,7 +42,6 @@ room getRoomInfo(int roomType) {
 }
 
 void addRoomInfo(room newInfo) {
-
     // Create error if room number exceeds
     if (roomTypeCount == MAX_ROOM_NUMBER) {
         createError("Room Number exceeded!");
@@ -57,7 +52,6 @@ void addRoomInfo(room newInfo) {
 }
 
 void updateRoomInfo(int roomType, room newInfo) {
-
     if (!validateRoomType(roomType)) {
         createError("Invalid roomType!");
         return;

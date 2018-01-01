@@ -1,5 +1,5 @@
 //
-// Created by codgi on 12/29/2017.
+// Created by codgician on 12/29/2017.
 // This file contains a global variable "errorStatus",
 // which indicates whether error occurs.
 //

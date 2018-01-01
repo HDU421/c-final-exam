@@ -65,11 +65,14 @@ int addRoomMenu() {
     }
 
     addRoomInfo(newRoomInfo);
+    clearConsole();
     if (errorStatus) {
         printf("\nFailed to add room...\n\n");
         clearError();
     } else {
         printf("\nRoom successfully added!\n\n");
+        printf("\tDetailed Information: \t\n\n");
+        printRoomInfo(newRoomInfo);
     }
 
     printf("\t\tNext step?\t\t\n\n");
@@ -118,11 +121,7 @@ int editRoomMenu() {
 
     printf("\t\tEdit room #%u\t\t\n\n", roomChoice);
     printf("\tCurrent information:\n");
-    printf("\tName: \t\t%s\n", roomInfo.roomName);
-    printf("\tPrice:\n");
-    printf("\t - Hourly: %u\n", roomInfo.price[HOUR_PRICE]);
-    printf("\t - Daily: %u\n", roomInfo.price[DAY_PRICE]);
-    printf("\n");
+    printRoomInfo(roomInfo);
 
     printf("Please enter new name (leave blank if you want to keep existing name: \n");
     char *tmp = getUserInput();
@@ -131,19 +130,19 @@ int editRoomMenu() {
     }
 
     printf("Please enter new price (HOURLY/DAILY, 0 if such type is not available):\n");
-    tmp = getUserInput();
-    while (sscanf(tmp, "%u/%u", &roomInfo.price[HOUR_PRICE], &roomInfo.price[DAY_PRICE]) < 2 || (roomInfo.price[HOUR_PRICE] == 0 && roomInfo.price[DAY_PRICE] == 0)) {
-        printf("\nInvalid room price, please try again...\n");
+    while (sscanf(getUserInput(), "%u/%u", &roomInfo.price[HOUR_PRICE], &roomInfo.price[DAY_PRICE]) < 2 || (roomInfo.price[HOUR_PRICE] == 0 && roomInfo.price[DAY_PRICE] == 0)) {
+        printf("Invalid room price, please try again...\n");
     }
 
-    free(tmp);
-
     updateRoomInfo(roomChoice - 1, roomInfo);
+    clearConsole();
     if (errorStatus) {
         printf("\nFailed to update room!\n\n");
         clearError();
     } else {
         printf("\nRoom successfully updated!\n\n");
+        printf("\tDetailed Information: \t\n\n");
+        printRoomInfo(roomInfo);
     }
 
     printf("\t\tNext step?\t\t\n\n");
@@ -152,11 +151,7 @@ int editRoomMenu() {
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    unsigned int choice;
-    while (sscanf(getUserInput(), "%u", &choice) < 1 || choice > 1) {
-        printf("Invalid input, please try again...\n");
-    }
-
+    int choice = getMenuChoice(0, 1);
     switch (choice) {
         case 1:
             return EDIT_ROOM_MENU;
@@ -186,6 +181,59 @@ int customerMenu() {
     int roomChoice = getRoomChoice(false);
     if (roomChoice == 0) {
         return MAIN_MENU;
+    }
+
+    room roomInfo = getRoomInfo(roomChoice - 1);
+    if (errorStatus) {
+        printf("Failed to retrieve room information!");
+        clearError();
+        printf("Press ENTER to continue...\n");
+        getchar();
+        return MAIN_MENU;
+    }
+
+    clearConsole();
+    printf("\t\tCustomer Menu\t\t\n\n\n");
+    printf("\t Selected:\n\n");
+    printRoomInfo(roomInfo);
+    printf("\tPlease select price type:\n");
+    printf("\t1. Hourly\n");
+    printf("\t2. Daily\n");
+    printf("\t0. Back...\n");
+    printf("\nPlease enter your choice to get started:\n");
+    int priceType = getMenuChoice(0, 2);
+    if (priceType == 0) {
+        return CUSTOMER_MENU;
+    }
+    priceType--;
+
+    datetime startDatetime, endDatetime;
+    if (priceType == HOUR_PRICE) {
+        printf("Please enter start datetime (MM/DD/YYYY HH):\n");
+        startDatetime = getDatetime(true);
+        printf("Please enter end datetime (MM/DD/YYYY HH):\n");
+        endDatetime = getDatetime(true);
+    } else {
+        printf("Please enter start date (MM/DD/YYYY):\n");
+        startDatetime = getDatetime(false);
+        printf("Please enter end date (MM/DD/YYYY):\n");
+        endDatetime = getDatetime(false);
+    }
+
+    checkIn(roomInfo, priceType, startDatetime, endDatetime);
+
+    printf("\t\tNext step?\t\t\n\n");
+    printf("\t1. Check in another customer\n\n");
+    printf("\t0. Back...\n\n");
+    printf("\n");
+    printf("Please select an option to get started:\n");
+
+    int choice = getMenuChoice(0, 1);
+    switch (choice) {
+        case 1:
+            return CUSTOMER_MENU;
+        case 0:
+            return MAIN_MENU;
     }
 
     return CUSTOMER_MENU;

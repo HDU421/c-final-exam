@@ -4,5 +4,5 @@ add_library(hotel ${LIBHOTEL_SOURCE})
 set(LIBIO_SOURCE bool.h io.c io.h)
 add_library(io ${LIBIO_SOURCE})
 
-set(LIBERROR_SOURCE error.h error.c)
+set(LIBERROR_SOURCE bool.h error.h error.c)
 add_library(error ${LIBERROR_SOURCE})

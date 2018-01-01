@@ -1,5 +1,5 @@
 //
-// Created by codgi on 12/29/2017.
+// Created by codgician on 12/29/2017.
 //
 
 #include "bool.h"

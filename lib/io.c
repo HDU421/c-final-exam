@@ -1,5 +1,5 @@
 //
-// Created by codgi on 12/29/2017.
+// Created by codgician on 12/29/2017.
 //
 
 #include <stdio.h>
@@ -7,11 +7,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "error.h"
 #include "io.h"
-#include "room.h"
-
-#define bool _Bool
 
 /* Clear console (cross platform) */
 void clearConsole() {
@@ -98,15 +94,24 @@ char *getUserInput() {
 int getMenuChoice(int lowerLimit, int upperLimit) {
     int choice;
 
-    char *userInput = getUserInput();
+    char *userInput;
 
-    while (sscanf(userInput, "%u", &choice) < 1 || choice < lowerLimit || choice > upperLimit) {
-        if (strlen(userInput) == 0) {
-            printError(ERR_INPUT_BLANK);
-        } else {
-            printError(ERR_INPUT_INVALID);
-        }
+    while (true) {
         userInput = getUserInput();
+        if (sscanf(userInput, "%d", &choice) < 1) {
+            if (strlen(userInput)) {
+                printError(ERR_INPUT_INVALID);
+            } else {
+                printError(ERR_INPUT_BLANK);
+            }
+            continue;
+        }
+
+        if (choice < lowerLimit || choice > upperLimit) {
+            continue;
+        }
+
+        break;
     }
 
     // Free pointer
@@ -161,8 +166,9 @@ int getRoomChoice(bool hideUnavailable) {
     int roomChoice;
     int roomTypeCount = getRoomTypeCount();
 
-    char *userInput = getUserInput();
+    char *userInput;
     while (true) {
+        userInput = getUserInput();
         if (sscanf(userInput, "%d", &roomChoice) < 1) {
             if (strlen(userInput)) {
                 printError(ERR_INPUT_INVALID);
@@ -189,4 +195,99 @@ int getRoomChoice(bool hideUnavailable) {
     free(userInput);
 
     return roomChoice;
+}
+
+void printRoomInfo(room roomInfo) {
+
+    printf("\tName: \t\t%s\n", roomInfo.roomName);
+    printf("\tPrice:\n");
+
+    printf("\t - Hourly: \t");
+    if (roomInfo.price[HOUR_PRICE]) {
+        printf("%u", roomInfo.price[HOUR_PRICE]);
+    } else {
+        printf("Unavailable");
+    }
+    printf("\n");
+
+    printf("\t - Daily: \t");
+    if (roomInfo.price[DAY_PRICE]) {
+        printf("%u", roomInfo.price[DAY_PRICE]);
+    } else {
+        printf("Unavailable");
+    }
+    printf("\n");
+
+    printf("\n");
+}
+
+datetime getDatetime(bool getHour) {
+    datetime d;
+
+    char *userInput;
+
+    if (getHour) {
+        while (true) {
+            userInput = getUserInput();
+            if (sscanf(userInput, "%2d/%2d/%4d %2d", &d.month, &d.day, &d.year, &d.hour) < 4) {
+                if (strlen(userInput)) {
+                    printError(ERR_INPUT_INVALID);
+                } else {
+                    printError(ERR_INPUT_BLANK);
+                }
+                continue;
+            }
+
+            if (d.year < YEAR_MIN || d.year > YEAR_MAX) {
+                printf("Invalid year, please try again...\n");
+                continue;
+            }
+            if (d.month < MONTH_MIN || d.month > MONTH_MAX) {
+                printf("Invalid month, please try again...\n");
+                continue;
+            }
+            if (d.day < 0 || d.day > getMonthDayCount(d.month, d.year)) {
+                printf("Invalid day, please try again...\n");
+                continue;
+            }
+            if (d.hour < 0 || d.hour > HOUR_MAX) {
+                printf("Invalid hour, please try again...\n");
+                continue;
+            }
+
+            break;
+        }
+    } else {
+        while (true) {
+            userInput = getUserInput();
+            if (sscanf(userInput, "%2d/%2d/%4d", &d.month, &d.day, &d.year) < 3) {
+                if (strlen(userInput)) {
+                    printError(ERR_INPUT_INVALID);
+                } else {
+                    printError(ERR_INPUT_BLANK);
+                }
+                continue;
+            }
+
+            if (d.year < YEAR_MIN || d.year > YEAR_MAX) {
+                printf("Invalid year, please try again...\n");
+                continue;
+            }
+            if (d.month < MONTH_MIN || d.month > MONTH_MAX) {
+                printf("Invalid month, please try again...\n");
+                continue;
+            }
+            if (d.day < 0 || d.day > getMonthDayCount(d.month, d.year)) {
+                printf("Invalid day, please try again...\n");
+                continue;
+            }
+
+            break;
+        }
+    }
+
+    userInput = NULL;
+    free(userInput);
+
+    return d;
 }
