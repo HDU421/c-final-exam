@@ -30,7 +30,7 @@ variable:		`roomInfo`
 
 function: 	`getRoomInfo()`  
 
-##Indentation
+## Indentation
 
 We use **K&R** style for indentation.  
 
