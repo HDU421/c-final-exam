@@ -47,7 +47,7 @@ int printRoomMenu() {
     printf("\t\tExisting rooms\t\t\n\n");
     printRoomChoices(false);
     printf("\n");
-    printf("Press ENTER to return...");
+    printf("Press ENTER to continue...");
     getchar();
     return ROOM_MENU;
 }
@@ -76,15 +76,14 @@ int addRoomMenu() {
         printf("Invalid room price, please try again...\n");
     }
 
-    addRoomInfo(newRoomInfo);
+    bool result = addRoomInfo(newRoomInfo);
     clearConsole();
-    if (errorStatus) {
-        printf("\nFailed to add room...\n\n");
-        clearError();
-    } else {
+    if (result) {
         printf("\nRoom successfully added!\n\n");
         printf("\tDetailed Information: \t\n\n");
         printRoomInfo(newRoomInfo);
+    } else {
+        printf("\nFailed to add room...\n\n");
     }
 
     printf("\t\tNext step?\t\t\n\n");
@@ -122,9 +121,8 @@ int editRoomMenu() {
 
     clearConsole();
     room roomInfo = getRoomInfo(roomChoice - 1);
-    if (errorStatus) {
+    if (roomInfo.price[0] < 0) {
         printf("Failed to retrieve room information!");
-        clearError();
         printf("Press ENTER to continue...\n");
         getchar();
         return MAIN_MENU;
@@ -145,15 +143,14 @@ int editRoomMenu() {
         printf("Invalid room price, please try again...\n");
     }
 
-    updateRoomInfo(roomChoice - 1, roomInfo);
+    result = updateRoomInfo(roomChoice - 1, roomInfo);
     clearConsole();
-    if (errorStatus) {
-        printf("\nFailed to update room!\n\n");
-        clearError();
-    } else {
+    if (result) {
         printf("\nRoom successfully updated!\n\n");
         printf("\tDetailed Information: \t\n\n");
         printRoomInfo(roomInfo);
+    } else {
+        printf("\nFailed to update room!\n\n");
     }
 
     printf("\t\tNext step?\t\t\n\n");
@@ -190,9 +187,8 @@ int toggleRoomMenu() {
     }
 
     room roomInfo = getRoomInfo(roomChoice - 1);
-    if (errorStatus) {
+    if (roomInfo.price[0] < 0) {
         printf("Failed to retrieve room information!");
-        clearError();
         printf("Press ENTER to continue...\n");
         getchar();
         return MAIN_MENU;
@@ -200,13 +196,12 @@ int toggleRoomMenu() {
 
     roomInfo.isAvailable = !roomInfo.isAvailable;
 
-    updateRoomInfo(roomChoice - 1, roomInfo);
+    result = updateRoomInfo(roomChoice - 1, roomInfo);
     clearConsole();
-    if (errorStatus) {
-        printf("\nFailed to update room availability!\n\n");
-        clearError();
-    } else {
+    if (result) {
         printf("\nRoom availability successfully updated!\n\n");
+    } else {
+        printf("\nFailed to update room availability!\n\n");
     }
 
     printf("\t\tNext step?\t\t\n\n");
@@ -244,9 +239,8 @@ int customerMenu() {
     }
 
     room roomInfo = getRoomInfo(roomChoice - 1);
-    if (errorStatus) {
+    if (roomInfo.price[0] < 0) {
         printf("Failed to retrieve room information!");
-        clearError();
         printf("Press ENTER to continue...\n");
         getchar();
         return MAIN_MENU;
@@ -330,6 +324,12 @@ int reportMenu() {
 
     // Retrieve financial report content
     revenue result = getReport(year, month);
+    if (result.real < 0 || result.expected < 0) {
+        printf("Failed to fetch financial report...\n");
+        printf("Press ENTER to continue...\n");
+        getchar();
+        return MAIN_MENU;
+    }
 
     // Print financial report
     clearConsole();

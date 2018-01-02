@@ -25,12 +25,12 @@ void initRevenueArr() {
 long long int getPrice(room roomInfo, int priceType, long long int duration) {
 
     if (!validatePriceType(priceType)) {
-        createError("Invalid price type!");
+        printInternalError("Invalid price type!");
         return -1;
     }
 
     if (duration <= 0) {
-        createError("Invalid duration!");
+        printInternalError("Invalid duration!");
         return -1;
     }
 
@@ -38,16 +38,16 @@ long long int getPrice(room roomInfo, int priceType, long long int duration) {
 }
 
 /* Check in and update revenue */
-void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
+bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        createError("End datetime smaller than start datetime.");
-        return;
+        printInternalError("End datetime smaller than start datetime.");
+        return false;
     }
 
     if (!validatePriceType(priceType)) {
-        createError("Invalid price type.");
-        return;
+        printInternalError("Invalid price type.");
+        return false;
     }
 
     int cntYear = startDatetime.year - 1970, cntMonth = startDatetime.month - 1;
@@ -106,19 +106,23 @@ void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
 
         revenueArr[endDatetime.year - 1970][endDatetime.month - 1].real += priceSum;
     }
+
+    return true;
 }
 
 /* Return financial report for a specific month */
 revenue getReport(int year, int month) {
 
     if (year < YEAR_MIN || year > YEAR_MAX) {
-        createError("Invalid year!");
-        return revenueArr[0][0];
+        printInternalError("Invalid year!");
+        revenue err = {-1};
+        return err;
     }
 
     if (month < MONTH_MIN || month > MONTH_MAX) {
-        createError("Invalid month!");
-        return revenueArr[0][0];
+        printInternalError("Invalid month!");
+        revenue err = {-1};
+        return err;
     }
 
     return revenueArr[year - 1970][month - 1];

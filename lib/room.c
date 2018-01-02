@@ -34,28 +34,31 @@ room getRoomInfo(int roomType) {
     // Create error if roomType is invalid
     // and return an invalid result
     if (!validateRoomType(roomType)) {
-        createError("Invalid room information.");
-        return roomArr[0];
+        printInternalError("Invalid room information.");
+        room err = {-1};
+        return err;
     }
 
     return roomArr[roomType];
 }
 
-void addRoomInfo(room newInfo) {
+bool addRoomInfo(room newInfo) {
     // Create error if room number exceeds
     if (roomTypeCount == MAX_ROOM_NUMBER) {
-        createError("Room Number exceeded!");
-        return;
+        printInternalError("Room Number exceeded!");
+        return false;
     }
 
     roomArr[roomTypeCount++] = newInfo;
+    return true;
 }
 
-void updateRoomInfo(int roomType, room newInfo) {
+bool updateRoomInfo(int roomType, room newInfo) {
     if (!validateRoomType(roomType)) {
-        createError("Invalid roomType!");
-        return;
+        printInternalError("Invalid roomType!");
+        return false;
     }
 
     roomArr[roomType] = newInfo;
+    return true;
 }

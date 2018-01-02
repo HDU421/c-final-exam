@@ -23,7 +23,7 @@ typedef struct _Revenue {
 
 void initRevenueArr();
 long long int getPrice(room roomInfo, int priceType, long long int duration);
-void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime);
+bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime);
 revenue getReport(int year, int month);
 
 #endif //C_FINAL_EXAM_CUSTOMER_H

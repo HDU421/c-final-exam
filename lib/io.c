@@ -221,12 +221,17 @@ void printRoomInfo(room roomInfo) {
     printf("\n");
 }
 
-datetime getDatetime(bool getHour) {
+datetime getDatetime(int varNum) {
     datetime d;
+
+    if (varNum > 4 || varNum < 2) {
+        datetime err = {-1};
+        return err;
+    }
 
     char *userInput;
 
-    if (getHour) {
+    if (varNum == 4) {
         while (true) {
             userInput = getUserInput();
             if (sscanf(userInput, "%2d/%2d/%4d %2d", &d.month, &d.day, &d.year, &d.hour) < 4) {
@@ -257,7 +262,7 @@ datetime getDatetime(bool getHour) {
 
             break;
         }
-    } else {
+    } else if (varNum == 3) {
         while (true) {
             userInput = getUserInput();
             if (sscanf(userInput, "%2d/%2d/%4d", &d.month, &d.day, &d.year) < 3) {
@@ -282,6 +287,28 @@ datetime getDatetime(bool getHour) {
                 continue;
             }
 
+            break;
+        }
+    } else if (varNum == 2) {
+        while (true) {
+            userInput = getUserInput();
+            if (sscanf(userInput, "%2d/%4d", &d.month, &d.year) < 3) {
+                if (strlen(userInput)) {
+                    printError(ERR_INPUT_INVALID);
+                } else {
+                    printError(ERR_INPUT_BLANK);
+                }
+                continue;
+            }
+
+            if (d.year < YEAR_MIN || d.year > YEAR_MAX) {
+                printf("Invalid year, please try again...\n");
+                continue;
+            }
+            if (d.month < MONTH_MIN || d.month > MONTH_MAX) {
+                printf("Invalid month, please try again...\n");
+                continue;
+            }
             break;
         }
     }

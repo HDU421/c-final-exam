@@ -91,7 +91,7 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        createError("End datetime smaller than start datetime.");
+        printInternalError("End datetime smaller than start datetime.");
         return -1;
     }
 
@@ -112,7 +112,7 @@ long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
     }
 
     if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        createError("End datetime smaller than start datetime.");
+        printInternalError("End datetime smaller than start datetime.");
         return -1;
     }
 

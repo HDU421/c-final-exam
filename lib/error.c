@@ -7,15 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bool.h"
 #include "error.h"
 
 #define ERROR_MSG_LENGTH 100
 
-bool errorStatus = false;
-
-void createError(char *msg) {
-    errorStatus = true;
+void printInternalError(char *msg) {
 
     char *errorMsg = (char*)malloc(ERROR_MSG_LENGTH + 1);
     sprintf(errorMsg, "INTERNAL ERROR: %s\n", msg);
@@ -24,8 +20,4 @@ void createError(char *msg) {
     // Free pointer
     errorMsg = NULL;
     free(errorMsg);
-}
-
-void clearError() {
-    errorStatus = false;
 }

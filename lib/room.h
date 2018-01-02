@@ -25,8 +25,8 @@ int getRoomTypeCount();
 bool validateRoomType(int roomType);
 bool validatePriceType(int priceType);
 room getRoomInfo(int roomType);
-void addRoomInfo(room newInfo);
-void updateRoomInfo(int roomType, room newInfo);
+bool addRoomInfo(room newInfo);
+bool updateRoomInfo(int roomType, room newInfo);
 
 #endif //C_FINAL_EXAM_ROOM_H
 
