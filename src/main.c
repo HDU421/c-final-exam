@@ -368,7 +368,7 @@ int reportMenu() {
     printf("\t\tFinancial Report Menu\t\t\n\n\n");
 
     // Prompt for year and month
-    printf("Please input year and month with the format of MM/YYYY (Enter 0 to go back):\n");
+    printf("Please input year and month with the format of MM/YYYY:\n");
     datetime d;
     d = getDatetime(2);
 
@@ -382,7 +382,7 @@ int reportMenu() {
 
     // Print financial report
     clearConsole();
-    printf("\t\tFinancial Report of %02u/%04u\t\t\n\n\n", d.month, d.year);
+    printf("\t\tFinancial Report of %02d/%04d\t\t\n\n\n", d.month, d.year);
     printf("\tExpected:\t%d\n", result.expected);
     printf("\tReal:\t\t%d\n", result.real);
     printf("\n\n");
