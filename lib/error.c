@@ -5,19 +5,7 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
 
-#include "error.h"
-
-#define ERROR_MSG_LENGTH 100
-
-void printInternalError(char *msg) {
-
-    char *errorMsg = (char*)malloc(ERROR_MSG_LENGTH + 1);
-    sprintf(errorMsg, "INTERNAL ERROR: %s\n", msg);
-    fprintf(stderr, errorMsg);
-
-    // Free pointer
-    errorMsg = NULL;
-    free(errorMsg);
+void printInternalError(char *msg, char *at) {
+    fprintf(stderr, "INTERNAL ERROR: %s at %s\n", msg, at);
 }

@@ -93,17 +93,17 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
     unsigned int checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY;
     if (!validateDatetime(startDatetime, checkOption) || !validateDatetime(endDatetime, checkOption)) {
-        printInternalError("Invalid start datetime or end datetime");
+        printInternalError("Invalid start datetime or end datetime", "getIntervalDays");
         return -1;
     }
 
     if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
-        printInternalError("End datetime smaller than start datetime.");
+        printInternalError("End datetime smaller than start datetime", "getIntervalDays");
         return -1;
     }
 
     long long int result = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
-    for (int i = startDatetime.year + 1; i <= endDatetime.year - 1; i++) {
+    for (int i = startDatetime.year; i <= endDatetime.year - 1; i++) {
         result += (isLeapYear(i) ? 366 : 365);
     }
 
@@ -115,12 +115,12 @@ long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
 
     unsigned int checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY + CHECK_HOUR;
     if (!validateDatetime(startDatetime, checkOption) || !validateDatetime(endDatetime, checkOption)) {
-        printInternalError("Invalid start datetime or end datetime");
+        printInternalError("Invalid start datetime or end datetime", "getIntervalHours");
         return -1;
     }
 
     if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
-        printInternalError("End datetime smaller than start datetime.");
+        printInternalError("End datetime smaller than start datetime", "getIntervalHours");
         return -1;
     }
 

@@ -13,6 +13,7 @@
 #define MONTH_COUNT 12
 #define HOUR_MIN 0
 #define HOUR_MAX 23
+#define HOUR_COUNT 24
 
 #define CHECK_YEAR 1
 #define CHECK_MONTH 2

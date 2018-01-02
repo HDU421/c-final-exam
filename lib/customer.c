@@ -24,12 +24,12 @@ void initRevenueArr() {
 long long int getPrice(room roomInfo, int priceType, long long int duration) {
 
     if (!validatePriceType(priceType)) {
-        printInternalError("Invalid price type!");
+        printInternalError("Invalid price type", "getPrice");
         return -1;
     }
 
     if (duration <= 0) {
-        printInternalError("Invalid duration!");
+        printInternalError("Invalid duration", "getPrice");
         return -1;
     }
 
@@ -45,71 +45,50 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     } else if (priceType == HOUR_PRICE) {
         checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY + CHECK_HOUR;
     } else {
-        printInternalError("Invalid price type.");
+        printInternalError("Invalid price type", "checkIn");
         return false;
     }
 
     if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
-        printInternalError("End datetime smaller than start datetime.");
+        printInternalError("End datetime smaller than start datetime", "checkIn");
         return false;
     }
 
-    int cntYear = startDatetime.year - 1970, cntMonth = startDatetime.month - 1;
-    long long int price = 0;
-
-    // If time period is within current month
-    if (startDatetime.year == endDatetime.year && startDatetime.month == endDatetime.month) {
-
-        if (priceType == HOUR_PRICE) {
-            price = getPrice(roomInfo, priceType, getIntervalHours(startDatetime, endDatetime));
-        } else {
-            price = getPrice(roomInfo, priceType, getIntervalDays(startDatetime, endDatetime));
-        }
-        revenueArr[cntYear][cntMonth].expected += price;
-        revenueArr[cntYear][cntMonth].real += price;
-
+    long long int cntPrice = 0;
+    if (priceType == HOUR_PRICE) {
+        cntPrice = getPrice(roomInfo, priceType, (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day) * HOUR_COUNT + (HOUR_MAX - startDatetime.hour + 1));
     } else {
-
-        long long int priceSum = 0;
-
-        if (priceType == HOUR_PRICE) {
-            price = getPrice(roomInfo, priceType, 24 * (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1) - startDatetime.hour);
-        } else {
-            price = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
-        }
-        revenueArr[cntYear][cntMonth].expected += price;
-        priceSum += price;
-
-        while (cntYear < endDatetime.year - 1970 || (cntYear == endDatetime.year - 1970 && cntMonth < endDatetime.month - 2)) {
-
-            if (cntMonth > 11) {
-                cntMonth = 0;
-                cntYear++;
-            } else {
-                cntMonth++;
-            }
-
-            if (priceType == HOUR_PRICE) {
-                price = getPrice(roomInfo, priceType, 24 * getMonthDayCount(cntMonth + 1, cntYear + 1970));
-            } else {
-                price = getPrice(roomInfo, priceType, getMonthDayCount(cntMonth + 1, cntYear + 1970));
-            }
-
-            revenueArr[cntYear][cntMonth].expected += price;
-            priceSum += price;
-
-        }
-
-        if (priceType == HOUR_PRICE) {
-            price = getPrice(roomInfo, priceType, 24 * (endDatetime.day - 1) + endDatetime.hour);
-        } else {
-            price = getPrice(roomInfo, priceType, endDatetime.day - 1);
-        }
-        revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected += price;
-        priceSum += price;
-
-        revenueArr[endDatetime.year - 1970][endDatetime.month - 1].real += priceSum;
+        cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
     }
+    revenueArr[startDatetime.year - YEAR_MIN][startDatetime.month - MONTH_MIN].expected += cntPrice;
+    revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+
+    datetime cntDatetime = startDatetime;
+    while (cntDatetime.year <= endDatetime.year && cntDatetime.month < endDatetime.month) {
+        // cntDatetime++
+        if (cntDatetime.month == 12) {
+            cntDatetime.year++;
+            cntDatetime.month = 1;
+        } else {
+            cntDatetime.month++;
+        }
+
+        if (priceType == HOUR_PRICE) {
+            cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year) * HOUR_COUNT);
+        } else {
+            cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year));
+        }
+        revenueArr[cntDatetime.year - YEAR_MIN][cntDatetime.month - MONTH_MIN].expected += cntPrice;
+        revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+    }
+
+    if (priceType == HOUR_PRICE) {
+        cntPrice = getPrice(roomInfo, priceType, endDatetime.day - 1) * HOUR_COUNT + endDatetime.hour;
+    } else {
+        cntPrice = getPrice(roomInfo, priceType, endDatetime.day - 1);
+    }
+    revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].expected += cntPrice;
+    revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
 
     return true;
 }
@@ -118,13 +97,13 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
 revenue getReport(datetime d) {
 
     if (d.year < YEAR_MIN || d.year > YEAR_MAX) {
-        printInternalError("Invalid year!");
+        printInternalError("Invalid year", "getReport");
         revenue err = {-1};
         return err;
     }
 
     if (d.month < MONTH_MIN || d.month > MONTH_MAX) {
-        printInternalError("Invalid month!");
+        printInternalError("Invalid month", "getReport");
         revenue err = {-1};
         return err;
     }

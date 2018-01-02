@@ -209,7 +209,7 @@ datetime getDatetime(int varNum) {
     datetime d;
 
     if (varNum > 4 || varNum < 2) {
-        printInternalError("Invalid varNum");
+        printInternalError("Invalid varNum", "getDatetime");
         datetime err = {-1};
         return err;
     }

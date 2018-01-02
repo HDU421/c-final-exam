@@ -33,7 +33,7 @@ room getRoomInfo(int roomType) {
     // Create error if roomType is invalid
     // and return an invalid result
     if (!validateRoomType(roomType)) {
-        printInternalError("Invalid room information.");
+        printInternalError("Invalid room information", "getRoomInfo");
         room err = {-1};
         return err;
     }
@@ -44,7 +44,7 @@ room getRoomInfo(int roomType) {
 bool addRoomInfo(room newInfo) {
     // Create error if room number exceeds
     if (roomTypeCount == MAX_ROOM_NUMBER) {
-        printInternalError("Room Number exceeded!");
+        printInternalError("Room Number exceeded", "addRoomInfo");
         return false;
     }
 
@@ -54,7 +54,7 @@ bool addRoomInfo(room newInfo) {
 
 bool updateRoomInfo(int roomType, room newInfo) {
     if (!validateRoomType(roomType)) {
-        printInternalError("Invalid roomType!");
+        printInternalError("Invalid roomType", "updateRoomInfo");
         return false;
     }
 
