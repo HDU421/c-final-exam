@@ -149,7 +149,6 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
-build
 
 ### Linux ###
 *~
@@ -213,5 +212,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Misc
+build
+dist
 
 # End of https://www.gitignore.io/api/c,c++,linux,macos,cmake,clion,windows
