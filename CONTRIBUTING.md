@@ -22,7 +22,7 @@ We are using `JetBrains CLion 2017` as our IDE (Integrated Development Environme
 
 We use **camel case** to name variables, functions and more in our project.  
 
-Name of variables should reflect there **real meanings in English**.
+Name of variables should present their **real meanings in English**.
 
 Here we provide some examples:
 
