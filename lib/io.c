@@ -220,7 +220,7 @@ datetime getDatetime(int varNum) {
     if (varNum == 4) {
         while (true) {
             userInput = getUserInput();
-            if (sscanf(userInput, "%2d/%2d/%4d %2d", &d.month, &d.day, &d.year, &d.hour) < 4) {
+            if (sscanf(userInput, "%2d/%2d/%4d %2d", &d.month, &d.day, &d.year, &d.hour) < varNum) {
                 if (strlen(userInput)) {
                     printf("Invalid input, please try again...\n");
                 } else {
@@ -251,7 +251,7 @@ datetime getDatetime(int varNum) {
     } else if (varNum == 3) {
         while (true) {
             userInput = getUserInput();
-            if (sscanf(userInput, "%2d/%2d/%4d", &d.month, &d.day, &d.year) < 3) {
+            if (sscanf(userInput, "%2d/%2d/%4d", &d.month, &d.day, &d.year) < varNum) {
                 if (strlen(userInput)) {
                     printf("Invalid input, please try again...\n");
                 } else {
@@ -278,7 +278,7 @@ datetime getDatetime(int varNum) {
     } else if (varNum == 2) {
         while (true) {
             userInput = getUserInput();
-            if (sscanf(userInput, "%2d/%4d", &d.month, &d.year) < 3) {
+            if (sscanf(userInput, "%2d/%4d", &d.month, &d.year) < varNum) {
                 if (strlen(userInput)) {
                     printf("Invalid input, please try again...\n");
                 } else {
