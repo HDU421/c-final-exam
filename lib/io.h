@@ -16,6 +16,7 @@
 #include "room.h"
 
 void clearConsole();
+void pauseConsole();
 void flushStdin();
 char *trim(char *str);
 char *getUserInput();

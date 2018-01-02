@@ -19,6 +19,11 @@ void clearConsole() {
 #endif
 }
 
+void pauseConsole() {
+    printf("Press ENTER to continue...\n");
+    getchar();
+}
+
 /* Flushes stdin buffer (failing on Linux with gcc) */
 void flushStdin() {
     char ch = 0;
@@ -110,11 +115,6 @@ int getMenuChoice(int lowerLimit, int upperLimit) {
 bool printRoomChoices(bool hideUnavailable) {
     int typeCount = getRoomTypeCount();
 
-    if (typeCount == 0) {
-        printf("No room type exists, please go back and add some...\n");
-        return false;
-    }
-
     bool flag = false;
     printf("\tSelectable rooms:\n\n");
     for (int i = 0; i < typeCount; i++) {
@@ -139,7 +139,7 @@ bool printRoomChoices(bool hideUnavailable) {
     }
 
     if (hideUnavailable && !flag) {
-        printf("All room types are unavailable, please go back and enable some...\n");
+        printf("\tNo rooms available.\n");
         return false;
     }
 
