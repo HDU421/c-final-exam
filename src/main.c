@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "customer.h"
@@ -257,7 +256,7 @@ int customerMenu() {
     printf("\t\tCustomer Menu\t\t\n\n\n");
     printf("\t Selected:\n\n");
     printRoomInfo(roomInfo);
-    printf("\tPlease select price type:\n");
+    printf("\tPlease select price type:\n\n");
     printf("\t1. Hourly\n\n");
     printf("\t2. Daily\n\n");
     printf("\t0. Back...\n\n");
@@ -335,7 +334,7 @@ int reportMenu() {
     // Print financial report
     clearConsole();
 
-    printf("\t\tFinancial Report of %u/%u\t\t\n\n\n", month, year);
+    printf("\t\tFinancial Report of %02u/%04u\t\t\n\n\n", month, year);
     printf("\tExpected:\t%u\n", result.expected);
     printf("\tReal:\t\t%u\n", result.real);
     printf("\n\n");
