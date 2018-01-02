@@ -111,19 +111,19 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
 }
 
 /* Return financial report for a specific month */
-revenue getReport(int year, int month) {
+revenue getReport(datetime d) {
 
-    if (year < YEAR_MIN || year > YEAR_MAX) {
+    if (d.year < YEAR_MIN || d.year > YEAR_MAX) {
         printInternalError("Invalid year!");
         revenue err = {-1};
         return err;
     }
 
-    if (month < MONTH_MIN || month > MONTH_MAX) {
+    if (d.month < MONTH_MIN || d.month > MONTH_MAX) {
         printInternalError("Invalid month!");
         revenue err = {-1};
         return err;
     }
 
-    return revenueArr[year - 1970][month - 1];
+    return revenueArr[d.year - 1970][d.month - 1];
 }

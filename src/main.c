@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "customer.h"
-#include "error.h"
 #include "io.h"
 
 #define EXIT_PROGRAM 0
@@ -267,9 +266,21 @@ int customerMenu() {
 
         while (true) {
             printf("Please enter start datetime (MM/DD/YYYY HH):\n");
-            startDatetime = getDatetime(true);
+            startDatetime = getDatetime(4);
+            if (startDatetime.year == -1) {
+                printf("Failed to retrieve start datetime...\n");
+                printf("Press ENTER to continue...\n");
+                getchar();
+                return MAIN_MENU;
+            }
             printf("Please enter end datetime (MM/DD/YYYY HH):\n");
-            endDatetime = getDatetime(true);
+            endDatetime = getDatetime(4);
+            if (endDatetime.year == -1) {
+                printf("Failed to retrieve start datetime...\n");
+                printf("Press ENTER to continue...\n");
+                getchar();
+                return MAIN_MENU;
+            }
             if (cmpDatetime(startDatetime, endDatetime) == 1) {
                 printf("Start datetime can't be bigger than end datetime!\n");
                 continue;
@@ -279,9 +290,21 @@ int customerMenu() {
     } else {
         while (true) {
             printf("Please enter start date (MM/DD/YYYY):\n");
-            startDatetime = getDatetime(false);
+            startDatetime = getDatetime(3);
+            if (startDatetime.year == -1) {
+                printf("Failed to retrieve start datetime...\n");
+                printf("Press ENTER to continue...\n");
+                getchar();
+                return MAIN_MENU;
+            }
             printf("Please enter end date (MM/DD/YYYY):\n");
-            endDatetime = getDatetime(false);
+            endDatetime = getDatetime(3);
+            if (endDatetime.year == -1) {
+                printf("Failed to retrieve start datetime...\n");
+                printf("Press ENTER to continue...\n");
+                getchar();
+                return MAIN_MENU;
+            }
             if (cmpDatetime(startDatetime, endDatetime) == 1) {
                 printf("Start datetime can't be bigger than end datetime!\n");
                 continue;
@@ -314,16 +337,11 @@ int reportMenu() {
 
     // Prompt for year and month
     printf("Please input year and month with the format of MM/YYYY (Enter 0 to go back):\n");
-    unsigned int year, month;
-    while (sscanf(getUserInput(), "%2u/%4u", &month, &year) < 2 || year < YEAR_MIN || year > YEAR_MAX || month < MONTH_MIN || month > MONTH_MAX) {
-        if (year == 0) {
-            return MAIN_MENU;
-        }
-        printf("Only years between 1970 and 9999 and months between 1 and 12 are supported. Please try again... \n");
-    }
+    datetime d;
+    d = getDatetime(2);
 
     // Retrieve financial report content
-    revenue result = getReport(year, month);
+    revenue result = getReport(d);
     if (result.real < 0 || result.expected < 0) {
         printf("Failed to fetch financial report...\n");
         printf("Press ENTER to continue...\n");
@@ -334,7 +352,7 @@ int reportMenu() {
     // Print financial report
     clearConsole();
 
-    printf("\t\tFinancial Report of %02u/%04u\t\t\n\n\n", month, year);
+    printf("\t\tFinancial Report of %02u/%04u\t\t\n\n\n", d.month, d.year);
     printf("\tExpected:\t%u\n", result.expected);
     printf("\tReal:\t\t%u\n", result.real);
     printf("\n\n");

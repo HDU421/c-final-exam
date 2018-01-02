@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "error.h"
 #include "io.h"
 
 /* Clear console (cross platform) */
@@ -22,22 +23,6 @@ void clearConsole() {
 void flushStdin() {
     char ch = 0;
     while ((ch = getchar()) != '\n' && ch != EOF) { }
-}
-
-/* Prints error message */
-void printError(int errorType) {
-    switch (errorType) {
-        case ERR_INPUT_BLANK:
-            printf("\b\r");
-            break;
-        case ERR_INPUT_INVALID:
-            printf("Invalid input, please try again...\n");
-            break;
-        case ERR_INPUT_ROOM_UNAVAILABLE:
-            printf("Room unavailable, please try again...\n");
-        default:
-            return;
-    }
 }
 
 /* Returns a trimmed string */
@@ -100,9 +85,9 @@ int getMenuChoice(int lowerLimit, int upperLimit) {
         userInput = getUserInput();
         if (sscanf(userInput, "%d", &choice) < 1) {
             if (strlen(userInput)) {
-                printError(ERR_INPUT_INVALID);
+                printf("Invalid input, please try again...\n");
             } else {
-                printError(ERR_INPUT_BLANK);
+                printf("\b\r");
             }
             continue;
         }
@@ -171,9 +156,9 @@ int getRoomChoice(bool hideUnavailable) {
         userInput = getUserInput();
         if (sscanf(userInput, "%d", &roomChoice) < 1) {
             if (strlen(userInput)) {
-                printError(ERR_INPUT_INVALID);
+                printf("Invalid input, please try again...\n");
             } else {
-                printError(ERR_INPUT_BLANK);
+                printf("\b\r");
             }
             continue;
         }
@@ -181,11 +166,11 @@ int getRoomChoice(bool hideUnavailable) {
             break;
         }
         if (roomChoice < 1 || roomChoice > roomTypeCount) {
-            printError(ERR_INPUT_ROOM_UNAVAILABLE);
+            printf("Room unavailable, please try again...\n");
             continue;
         }
         if (hideUnavailable && !getRoomInfo(roomChoice - 1).isAvailable) {
-            printError(ERR_INPUT_ROOM_UNAVAILABLE);
+            printf("Room unavailable, please try again...\n");
             continue;
         }
         break;
@@ -225,6 +210,7 @@ datetime getDatetime(int varNum) {
     datetime d;
 
     if (varNum > 4 || varNum < 2) {
+        printInternalError("Invalid varNum");
         datetime err = {-1};
         return err;
     }
@@ -236,9 +222,9 @@ datetime getDatetime(int varNum) {
             userInput = getUserInput();
             if (sscanf(userInput, "%2d/%2d/%4d %2d", &d.month, &d.day, &d.year, &d.hour) < 4) {
                 if (strlen(userInput)) {
-                    printError(ERR_INPUT_INVALID);
+                    printf("Invalid input, please try again...\n");
                 } else {
-                    printError(ERR_INPUT_BLANK);
+                    printf("\b\r");
                 }
                 continue;
             }
@@ -267,9 +253,9 @@ datetime getDatetime(int varNum) {
             userInput = getUserInput();
             if (sscanf(userInput, "%2d/%2d/%4d", &d.month, &d.day, &d.year) < 3) {
                 if (strlen(userInput)) {
-                    printError(ERR_INPUT_INVALID);
+                    printf("Invalid input, please try again...\n");
                 } else {
-                    printError(ERR_INPUT_BLANK);
+                    printf("\b\r");
                 }
                 continue;
             }
@@ -294,9 +280,9 @@ datetime getDatetime(int varNum) {
             userInput = getUserInput();
             if (sscanf(userInput, "%2d/%4d", &d.month, &d.year) < 3) {
                 if (strlen(userInput)) {
-                    printError(ERR_INPUT_INVALID);
+                    printf("Invalid input, please try again...\n");
                 } else {
-                    printError(ERR_INPUT_BLANK);
+                    printf("\b\r");
                 }
                 continue;
             }
