@@ -40,18 +40,25 @@ int getDayNumInYear(datetime t) {
     return result;
 }
 
-/* Validate given datetime */
-bool validateDatetime(datetime t) {
-    if (t.year < YEAR_MIN || t.year > YEAR_MAX) {
+/* Validate given datetime
+ * As for options, we've used bitwise to store it
+ * CHECK_YEAR   0001 (1): Validate year
+ * CHECK_MONTH  0010 (2): Validate month
+ * CHECK_DAY    0100 (4): Validate day
+ * CHECK_HOUR   1000 (8): Validate hour
+ */
+bool validateDatetime(datetime d, unsigned int option) {
+
+    if ((option & CHECK_YEAR) && (d.year < YEAR_MIN || d.year > YEAR_MAX)) {
         return false;
     }
-    if (t.month < MONTH_MIN || t.month > MONTH_MAX) {
+    if ((option & CHECK_MONTH) && (d.month < MONTH_MIN || d.month > MONTH_MAX)) {
         return false;
     }
-    if (t.day > getMonthDayCount(t.month, t.year)) {
+    if ((option & CHECK_DAY) && (d.day > getMonthDayCount(d.month, d.year))) {
         return false;
     }
-    if (t.hour < HOUR_MIN || t.hour > HOUR_MAX) {
+    if ((option & CHECK_HOUR) && (d.hour < HOUR_MIN || d.hour > HOUR_MAX)) {
         return false;
     }
     return true;
@@ -61,36 +68,36 @@ bool validateDatetime(datetime t) {
  * a < b: return 0;
  * a > b: return 1;
  * a == b: return 2;
+ * The usage of "option" is the same as "option" in validateDatetime().
  */
-int cmpDatetime(datetime a, datetime b) {
-    if (a.year == b.year) {
-        if (a.month == b.month) {
-            if (a.day == b.day) {
-                if (a.hour == b.hour) {
-                    return 2; // Identical
-                } else {
-                    return a.hour > b.hour;
-                }
-            } else {
-                return a.day > b.day;
-            }
-        } else {
-            return a.month > b.month;
-        }
-    } else {
+int cmpDatetime(datetime a, datetime b, unsigned int option) {
+    if ((option & CHECK_YEAR) && a.year != b.year) {
         return a.year > b.year;
     }
+    if ((option & CHECK_MONTH) && a.month != b.month) {
+        return a.month > b.month;
+    }
+    if ((option & CHECK_DAY) && a.day != b.day) {
+        return a.day > b.day;
+    }
+    if ((option & CHECK_HOUR) && a.hour != b.hour) {
+        return a.hour > b.hour;
+    }
+
+    // Otherwise they they must be identical!
+    return 2;
 }
 
 /* Get day count between two given datetimes */
 long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
-    if (!validateDatetime(startDatetime) || !validateDatetime(endDatetime)) {
+    unsigned int checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY;
+    if (!validateDatetime(startDatetime, checkOption) || !validateDatetime(endDatetime, checkOption)) {
         printInternalError("Invalid start datetime or end datetime");
         return -1;
     }
 
-    if (cmpDatetime(startDatetime, endDatetime) == 1) {
+    if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
         printInternalError("End datetime smaller than start datetime.");
         return -1;
     }
@@ -106,12 +113,13 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 /* Get hour count between two given datetime */
 long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
 
-    if (!validateDatetime(startDatetime) || !validateDatetime(endDatetime)) {
+    unsigned int checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY + CHECK_HOUR;
+    if (!validateDatetime(startDatetime, checkOption) || !validateDatetime(endDatetime, checkOption)) {
         printInternalError("Invalid start datetime or end datetime");
         return -1;
     }
 
-    if (cmpDatetime(startDatetime, endDatetime) == 1) {
+    if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
         printInternalError("End datetime smaller than start datetime.");
         return -1;
     }

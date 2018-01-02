@@ -321,12 +321,15 @@ int customerMenu() {
     // Retrieve start and end datetime
     datetime startDatetime, endDatetime;
     int varNum;
+    unsigned int checkOption;
     char datetimeFormat[BUFFER_LENGTH + 1];
     if (priceType == HOUR_PRICE) {
         varNum = 4;
+        checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY + CHECK_HOUR;
         sprintf(datetimeFormat, "MM/DD/YYYY HH");
     } else {
         varNum = 3;
+        checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY;
         sprintf(datetimeFormat, "MM/DD/YYYY");
     }
 
@@ -345,7 +348,7 @@ int customerMenu() {
             pauseConsole();
             return MAIN_MENU;
         }
-        if (cmpDatetime(startDatetime, endDatetime) == 1) {
+        if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
             printf("Start datetime can't be bigger than end datetime!\n");
             continue;
         }

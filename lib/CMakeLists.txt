@@ -1,4 +1,4 @@
-set(LIBHOTEL_SOURCE bool.h room.c room.h customer.c customer.h datetime.c datetime.h bool.h)
+set(LIBHOTEL_SOURCE bool.h room.c room.h customer.c customer.h datetime.c datetime.h)
 add_library(hotel ${LIBHOTEL_SOURCE})
 
 set(LIBIO_SOURCE bool.h io.c io.h)

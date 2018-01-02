@@ -39,13 +39,18 @@ long long int getPrice(room roomInfo, int priceType, long long int duration) {
 /* Check in and update revenue */
 bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
 
-    if (cmpDatetime(startDatetime, endDatetime) == 1) {
-        printInternalError("End datetime smaller than start datetime.");
+    unsigned int checkOption;
+    if (priceType == DAY_PRICE) {
+        checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY;
+    } else if (priceType == HOUR_PRICE) {
+        checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY + CHECK_HOUR;
+    } else {
+        printInternalError("Invalid price type.");
         return false;
     }
 
-    if (!validatePriceType(priceType)) {
-        printInternalError("Invalid price type.");
+    if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
+        printInternalError("End datetime smaller than start datetime.");
         return false;
     }
 
