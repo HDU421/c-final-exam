@@ -98,6 +98,7 @@ int getMenuChoice(int lowerLimit, int upperLimit) {
         }
 
         if (choice < lowerLimit || choice > upperLimit) {
+            printf("Invalid choice, please try again...\n");
             continue;
         }
 
