@@ -2,10 +2,6 @@
 // Created by codgician on 12/22/2017.
 //
 
-#ifndef C_FINAL_EXAM_BOOL_H
-#include "bool.h"
-#endif
-
 #ifndef C_FINAL_EXAM_ROOM_H
 #define C_FINAL_EXAM_ROOM_H
 
@@ -14,6 +10,8 @@
 #define HOUR_PRICE 0
 #define DAY_PRICE 1
 
+#include "bool.h"
+#include "error.h"
 
 typedef struct _Room {
     unsigned int price[2];

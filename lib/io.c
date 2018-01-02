@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "error.h"
 #include "io.h"
 
 /* Clear console (cross platform) */
@@ -117,7 +116,6 @@ bool printRoomChoices(bool hideUnavailable) {
     int typeCount = getRoomTypeCount();
 
     bool flag = false;
-    printf("\tSelectable rooms:\n\n");
     for (int i = 0; i < typeCount; i++) {
         room roomInfo = getRoomInfo(i);
         if (!hideUnavailable || roomInfo.isAvailable) {

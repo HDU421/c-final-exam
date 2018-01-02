@@ -292,20 +292,31 @@ int customerMenu() {
     printf("\t Selected:\n\n");
     printRoomInfo(roomInfo);
 
-    // Prompt for price type
-    printf("\tPlease select price type:\n\n");
-    printf("\t1. Hourly\n\n");
-    printf("\t2. Daily\n\n");
-    printf("\t0. Back...\n\n");
-    printf("\n");
-    printf("Please enter your choice to get started:\n");
+    int priceType;
+    if (roomInfo.price[HOUR_PRICE] == 0) {
+        // If room only supports paying by day
+        priceType = DAY_PRICE;
+        printf("This room only supports paying by day.\n\n");
+    } else if (roomInfo.price[DAY_PRICE] == 0) {
+        // If room only supports paying by hour
+        priceType = HOUR_PRICE;
+        printf("This room only supports paying by hour.\n\n");
+    } else {
+        // Prompt for price type
+        printf("\tPlease select price type:\n\n");
+        printf("\t1. Hourly\n\n");
+        printf("\t2. Daily\n\n");
+        printf("\t0. Back...\n\n");
+        printf("\n");
+        printf("Please enter your choice to get started:\n");
 
-    // Retrieve price type
-    int priceType = getMenuChoice(0, 2);
-    if (priceType == 0) {
-        return CUSTOMER_MENU;
+        // Retrieve price type
+        priceType = getMenuChoice(0, 2);
+        if (priceType == 0) {
+            return CUSTOMER_MENU;
+        }
+        priceType--;
     }
-    priceType--;
 
     // Retrieve start and end datetime
     datetime startDatetime, endDatetime;

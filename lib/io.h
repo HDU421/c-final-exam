@@ -7,12 +7,9 @@
 
 #define BUFFER_LENGTH 100
 
-#define ERR_INPUT_BLANK 1
-#define ERR_INPUT_INVALID 2
-#define ERR_INPUT_ROOM_UNAVAILABLE 3
-
 #include "bool.h"
 #include "datetime.h"
+#include "error.h"
 #include "room.h"
 
 void clearConsole();
@@ -20,7 +17,7 @@ void pauseConsole();
 void flushStdin();
 char *trim(char *str);
 char *getUserInput();
-int getMenuChoice(int lowerLimit, int upprLimit);
+int getMenuChoice(int lowerLimit, int upperLimit);
 bool printRoomChoices(bool hideUnavailable);
 int getRoomChoice(bool hideUnavailable);
 void printRoomInfo(room roomInfo);

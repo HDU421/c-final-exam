@@ -5,7 +5,6 @@
 // that are related to room management.
 //
 
-#include "error.h"
 #include "room.h"
 
 room roomArr[MAX_ROOM_NUMBER];

@@ -14,6 +14,9 @@
 #define HOUR_MIN 0
 #define HOUR_MAX 23
 
+#include "bool.h"
+#include "error.h"
+
 typedef struct _Datetime {
     int year;
     int month;

@@ -6,7 +6,6 @@
 //
 
 #include "customer.h"
-#include "error.h"
 
 // struct "revenue" is defined in "customer.h"
 revenue revenueArr[YEAR_COUNT][MONTH_COUNT];

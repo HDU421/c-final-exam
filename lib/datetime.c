@@ -5,8 +5,6 @@
 // that are related to datetime calculations.
 //
 
-#include "bool.h"
-#include "error.h"
 #include "datetime.h"
 
 // Days for each month
@@ -31,10 +29,12 @@ int getMonthDayCount(int month, int year) {
 int getDayNumInYear(datetime t) {
     int result = 0;
 
+    // First count the days of full months
     for (int i = 1; i < t.month; i++) {
         result += getMonthDayCount(i, t.year);
     }
 
+    // Add remaining days
     result += t.day;
 
     return result;
@@ -86,7 +86,7 @@ int cmpDatetime(datetime a, datetime b) {
 long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
     if (!validateDatetime(startDatetime) || !validateDatetime(endDatetime)) {
-        // Error has already been created by validateDatetime()
+        printInternalError("Invalid start datetime or end datetime");
         return -1;
     }
 
@@ -96,7 +96,6 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
     }
 
     long long int result = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
-
     for (int i = startDatetime.year + 1; i <= endDatetime.year - 1; i++) {
         result += (isLeapYear(i) ? 366 : 365);
     }
@@ -108,6 +107,7 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
 
     if (!validateDatetime(startDatetime) || !validateDatetime(endDatetime)) {
+        printInternalError("Invalid start datetime or end datetime");
         return -1;
     }
 
