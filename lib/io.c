@@ -137,7 +137,7 @@ bool printRoomChoices(bool hideUnavailable) {
         }
     }
 
-    if (hideUnavailable && !flag) {
+    if (typeCount == 0 || (hideUnavailable && !flag)) {
         printf("\tNo rooms available.\n");
         return false;
     }
