@@ -46,30 +46,32 @@ void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     }
 
     if (!validatePriceType(priceType)) {
-        createError("Invalid priceType.");
+        createError("Invalid price type.");
         return;
     }
 
     int cntYear = startDatetime.year - 1970, cntMonth = startDatetime.month - 1;
+    long long int price = 0;
 
     // If time period is within current month
     if (startDatetime.year == endDatetime.year && startDatetime.month == endDatetime.month) {
 
-        long long int duration = getIntervalDays(startDatetime, endDatetime);
-        int price = getPrice(roomInfo, priceType, duration);
-
+        if (priceType == HOUR_PRICE) {
+            price = getPrice(roomInfo, priceType, getIntervalHours(startDatetime, endDatetime));
+        } else {
+            price = getPrice(roomInfo, priceType, getIntervalDays(startDatetime, endDatetime));
+        }
         revenueArr[cntYear][cntMonth].expected += price;
         revenueArr[cntYear][cntMonth].real += price;
 
     } else {
 
         if (priceType == HOUR_PRICE) {
-            int price = getPrice(roomInfo, priceType, 24 * (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1) - startDatetime.hour);
-            revenueArr[cntYear][cntMonth].expected += price;
+            price = getPrice(roomInfo, priceType, 24 * (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1) - startDatetime.hour);
         } else {
-            int price = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
-            revenueArr[cntYear][cntMonth].expected += price;
+            price = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
         }
+        revenueArr[cntYear][cntMonth].expected += price;
 
         while (cntYear < endDatetime.year - 1970 || (cntYear == endDatetime.year - 1970 && cntMonth < endDatetime.month - 2)) {
 
@@ -79,8 +81,6 @@ void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
             } else {
                 cntMonth++;
             }
-
-            int price;
 
             if (priceType == HOUR_PRICE) {
                 price = getPrice(roomInfo, priceType, 24 * getMonthDayCount(cntMonth + 1, cntYear + 1970));
@@ -93,12 +93,11 @@ void checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
         }
 
         if (priceType == HOUR_PRICE) {
-            int price = getPrice(roomInfo, priceType, 24 * (endDatetime.day - 1) + endDatetime.hour);
-            revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected += price;
+            price = getPrice(roomInfo, priceType, 24 * (endDatetime.day - 1) + endDatetime.hour);
         } else {
-            int price = getPrice(roomInfo, priceType, endDatetime.day - 1);
-            revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected+= price;
+            price = getPrice(roomInfo, priceType, endDatetime.day - 1);
         }
+        revenueArr[endDatetime.year - 1970][endDatetime.month - 1].expected += price;
     }
 }
 

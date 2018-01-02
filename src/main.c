@@ -9,34 +9,47 @@
 #define EXIT_PROGRAM 0
 #define MAIN_MENU 1
 #define ROOM_MENU 2
-#define ADD_ROOM_MENU 3
-#define EDIT_ROOM_MENU 4
-#define MARK_ROOM_MENU 5
-#define CUSTOMER_MENU 6
-#define REPORT_MENU 7
+#define PRINT_ROOM_MENU 3
+#define ADD_ROOM_MENU 4
+#define EDIT_ROOM_MENU 5
+#define TOGGLE_ROOM_MENU 6
+#define CUSTOMER_MENU 7
+#define REPORT_MENU 8
 
 /* Room menu */
 int roomMenu() {
     printf("\t\tRoom Menu\t\t\n\n\n");
-    printf("\t1. Add new room information\n\n");
-    printf("\t2. Edit existing room information\n\n");
-    printf("\t3. Toggle room availability\n\n");
+    printf("\t1. Show existing rooms\n\n");
+    printf("\t2. Add new room information\n\n");
+    printf("\t3. Edit existing room information\n\n");
+    printf("\t4. Toggle room availability\n\n");
     printf("\t0. Back...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 
-    int choice = getMenuChoice(0, 3);
+    int choice = getMenuChoice(0, 4);
     switch (choice) {
         case 1:
-            return ADD_ROOM_MENU;
+            return PRINT_ROOM_MENU;
         case 2:
-            return EDIT_ROOM_MENU;
+            return ADD_ROOM_MENU;
         case 3:
-            return MARK_ROOM_MENU;
+            return EDIT_ROOM_MENU;
+        case 4:
+            return TOGGLE_ROOM_MENU;
         case 0:
             return MAIN_MENU;
     }
 
+    return ROOM_MENU;
+}
+
+int printRoomMenu() {
+    printf("\t\tExisting rooms\t\t\n\n");
+    printRoomChoices(false);
+    printf("\n");
+    printf("Press ENTER to return...");
+    getchar();
     return ROOM_MENU;
 }
 
@@ -90,7 +103,6 @@ int addRoomMenu() {
     }
 
     return ADD_ROOM_MENU;
-
 }
 
 int editRoomMenu() {
@@ -162,8 +174,57 @@ int editRoomMenu() {
     return EDIT_ROOM_MENU;
 }
 
-int markRoomMenu() {
-    return MAIN_MENU;
+int toggleRoomMenu() {
+    printf("\t\tChange room availability\t\t\n\n\n");
+
+    bool result = printRoomChoices(false);
+    if (!result) {
+        printf("Press ENTER to continue...\n");
+        getchar();
+        return ROOM_MENU;
+    }
+
+    printf("\nPlease select a room type from above to toggle availability:\n");
+    int roomChoice = getRoomChoice(false);
+    if (roomChoice == 0) {
+        return ROOM_MENU;
+    }
+
+    room roomInfo = getRoomInfo(roomChoice - 1);
+    if (errorStatus) {
+        printf("Failed to retrieve room information!");
+        clearError();
+        printf("Press ENTER to continue...\n");
+        getchar();
+        return MAIN_MENU;
+    }
+
+    roomInfo.isAvailable = !roomInfo.isAvailable;
+
+    updateRoomInfo(roomChoice - 1, roomInfo);
+    clearConsole();
+    if (errorStatus) {
+        printf("\nFailed to update room availability!\n\n");
+        clearError();
+    } else {
+        printf("\nRoom availability successfully updated!\n\n");
+    }
+
+    printf("\t\tNext step?\t\t\n\n");
+    printf("\t1. Toggle another room\n\n");
+    printf("\t0. Back...\n\n");
+    printf("\n");
+    printf("Please select an option to get started:\n");
+
+    int choice = getMenuChoice(0, 1);
+    switch (choice) {
+        case 1:
+            return TOGGLE_ROOM_MENU;
+        case 0:
+            return ROOM_MENU;
+    }
+
+    return TOGGLE_ROOM_MENU;
 }
 
 int customerMenu() {
@@ -197,10 +258,11 @@ int customerMenu() {
     printf("\t Selected:\n\n");
     printRoomInfo(roomInfo);
     printf("\tPlease select price type:\n");
-    printf("\t1. Hourly\n");
-    printf("\t2. Daily\n");
-    printf("\t0. Back...\n");
-    printf("\nPlease enter your choice to get started:\n");
+    printf("\t1. Hourly\n\n");
+    printf("\t2. Daily\n\n");
+    printf("\t0. Back...\n\n");
+    printf("\n");
+    printf("Please enter your choice to get started:\n");
     int priceType = getMenuChoice(0, 2);
     if (priceType == 0) {
         return CUSTOMER_MENU;
@@ -209,15 +271,30 @@ int customerMenu() {
 
     datetime startDatetime, endDatetime;
     if (priceType == HOUR_PRICE) {
-        printf("Please enter start datetime (MM/DD/YYYY HH):\n");
-        startDatetime = getDatetime(true);
-        printf("Please enter end datetime (MM/DD/YYYY HH):\n");
-        endDatetime = getDatetime(true);
+
+        while (true) {
+            printf("Please enter start datetime (MM/DD/YYYY HH):\n");
+            startDatetime = getDatetime(true);
+            printf("Please enter end datetime (MM/DD/YYYY HH):\n");
+            endDatetime = getDatetime(true);
+            if (cmpDatetime(startDatetime, endDatetime) == 1) {
+                printf("Start datetime can't be bigger than end datetime!\n");
+                continue;
+            }
+            break;
+        }
     } else {
-        printf("Please enter start date (MM/DD/YYYY):\n");
-        startDatetime = getDatetime(false);
-        printf("Please enter end date (MM/DD/YYYY):\n");
-        endDatetime = getDatetime(false);
+        while (true) {
+            printf("Please enter start date (MM/DD/YYYY):\n");
+            startDatetime = getDatetime(false);
+            printf("Please enter end date (MM/DD/YYYY):\n");
+            endDatetime = getDatetime(false);
+            if (cmpDatetime(startDatetime, endDatetime) == 1) {
+                printf("Start datetime can't be bigger than end datetime!\n");
+                continue;
+            }
+            break;
+        }
     }
 
     checkIn(roomInfo, priceType, startDatetime, endDatetime);
@@ -322,14 +399,17 @@ int main(int argc, char *argv[]) {
             case ROOM_MENU:
                 menuPt = roomMenu();
                 break;
+            case PRINT_ROOM_MENU:
+                menuPt = printRoomMenu();
+                break;
             case ADD_ROOM_MENU:
                 menuPt = addRoomMenu();
                 break;
             case EDIT_ROOM_MENU:
                 menuPt = editRoomMenu();
                 break;
-            case MARK_ROOM_MENU:
-                menuPt = markRoomMenu();
+            case TOGGLE_ROOM_MENU:
+                menuPt = toggleRoomMenu();
                 break;
             case CUSTOMER_MENU:
                 menuPt = customerMenu();

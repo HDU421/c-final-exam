@@ -68,6 +68,8 @@ int cmpDatetime(datetime a, datetime b) {
             if (a.day == b.day) {
                 if (a.hour == b.hour) {
                     return 2; // Identical
+                } else {
+                    return a.hour > b.hour;
                 }
             } else {
                 return a.day > b.day;

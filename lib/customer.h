@@ -17,8 +17,8 @@
 #define ERR_
 
 typedef struct _Revenue {
-    int expected;
-    int real;
+    long long int expected;
+    long long int real;
 } revenue;
 
 void initRevenueArr();

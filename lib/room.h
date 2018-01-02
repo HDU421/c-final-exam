@@ -14,8 +14,6 @@
 #define HOUR_PRICE 0
 #define DAY_PRICE 1
 
-#define ERR_ROOMTYPE_INVALID -1
-
 
 typedef struct _Room {
     unsigned int price[2];
