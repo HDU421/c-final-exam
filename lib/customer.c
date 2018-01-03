@@ -64,15 +64,14 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
 
     datetime cntDatetime = startDatetime;
+    // cntDatetime++
+    if (cntDatetime.month == 12) {
+        cntDatetime.year++;
+        cntDatetime.month = 1;
+    } else {
+        cntDatetime.month++;
+    }
     while (cntDatetime.year <= endDatetime.year && cntDatetime.month < endDatetime.month) {
-        // cntDatetime++
-        if (cntDatetime.month == 12) {
-            cntDatetime.year++;
-            cntDatetime.month = 1;
-        } else {
-            cntDatetime.month++;
-        }
-
         if (priceType == HOUR_PRICE) {
             cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year) * HOUR_COUNT);
         } else {
@@ -80,6 +79,14 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
         }
         revenueArr[cntDatetime.year - YEAR_MIN][cntDatetime.month - MONTH_MIN].expected += cntPrice;
         revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+
+        // cntDatetime++
+        if (cntDatetime.month == 12) {
+            cntDatetime.year++;
+            cntDatetime.month = 1;
+        } else {
+            cntDatetime.month++;
+        }
     }
 
     if (priceType == HOUR_PRICE) {

@@ -27,4 +27,3 @@ bool addRoomInfo(room newInfo);
 bool updateRoomInfo(int roomType, room newInfo);
 
 #endif //C_FINAL_EXAM_ROOM_H
-
