@@ -10,7 +10,7 @@
 #include "error.h"
 #include "room.h"
 
-#define BUFFER_LENGTH 100
+#define BUFFER_LENGTH 10001
 
 void clearConsole();
 void pauseConsole();
