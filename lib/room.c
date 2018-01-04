@@ -56,7 +56,7 @@ bool addRoomInfo(room newInfo) {
     }
 
     // Return error if room info is invalid
-    if (validateRoomInfo(newInfo)) {
+    if (!validateRoomInfo(newInfo)) {
         printInternalError("Invalid room info", "addRoomInfo");
         return false;
     }
@@ -74,7 +74,7 @@ bool updateRoomInfo(int roomType, room newInfo) {
     }
 
     // Return error if room info is invalid
-    if (validateRoomInfo(newInfo)) {
+    if (!validateRoomInfo(newInfo)) {
         printInternalError("Invalid room info", "updateRoomInfo");
         return false;
     }
