@@ -63,20 +63,26 @@ char *getUserInput() {
     char *buffer = (char*)malloc(BUFFER_LENGTH + 1);
 
     while (fgets(buffer, BUFFER_LENGTH, stdin)) {
-
+        #if defined linux
+        // Flush stdin if buffer is not empty
+        if (!feof(stdin)) {
+            printf("Input is too long, please try again...\n");
+            flushStdin();
+            continue;
+        }
+        #else
         // Put the pointer at the end of stdin buffer
         fseek (stdin, 0, SEEK_END);
-
         // Flush stdin if buffer is not empty
         if (ftell(stdin) > 0) {
             printf("Input is too long, please try again...\n");
             flushStdin();
             continue;
         }
+        #endif
 
         // Trim user input
         buffer = trim(buffer);
-
         return buffer;
     }
 }
