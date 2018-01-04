@@ -5,12 +5,12 @@
 #ifndef C_FINAL_EXAM_INPUT_H
 #define C_FINAL_EXAM_INPUT_H
 
-#define BUFFER_LENGTH 100
-
 #include "bool.h"
 #include "datetime.h"
 #include "error.h"
 #include "room.h"
+
+#define BUFFER_LENGTH 100
 
 void clearConsole();
 void pauseConsole();

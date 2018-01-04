@@ -1,8 +1,19 @@
+//
+// Created by BlackZZJ on 12/27/2017.
+//
+// This is our main program, containing
+// menu interface and service logic.
+//
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "customer.h"
+#include "room.h"
+#include "datetime.h"
+
+#include "error.h"
 #include "io.h"
 
 #define EXIT_PROGRAM 0

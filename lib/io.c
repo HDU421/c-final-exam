@@ -9,7 +9,7 @@
 
 #include "io.h"
 
-/* Clear console (cross platform) */
+/* Clear console (cross-platform) */
 void clearConsole() {
 #if defined _WIN32 || defined _WIN64
     system("cls");
@@ -18,20 +18,22 @@ void clearConsole() {
 #endif
 }
 
+/* Pause console: Press ENTER to continue (cross-platform) */
 void pauseConsole() {
     printf("Press ENTER to continue...\n");
     getchar();
 }
 
-/* Flushes stdin buffer (failing on Linux with gcc) */
+/* Flushes stdin buffer (**failing on Linux with gcc 6) */
 void flushStdin() {
     char ch = 0;
     while ((ch = getchar()) != '\n' && ch != EOF) { }
 }
 
-/* Returns a trimmed string */
+/* Returns a trimmed string, removes spaces at front and end */
 char *trim(char *str) {
 
+    // Allocate result
     char *result = (char*)malloc(BUFFER_LENGTH + 1);
 
     // Remove blank spaces at the head of the string
@@ -54,10 +56,10 @@ char *trim(char *str) {
     return result;
 }
 
-
-/* Get user input and return the input as a string */
+/* Get user input and return it as a string */
 char *getUserInput() {
 
+    // Allocate input buffer
     char *buffer = (char*)malloc(BUFFER_LENGTH + 1);
 
     while (fgets(buffer, BUFFER_LENGTH, stdin)) {
@@ -115,11 +117,11 @@ int getMenuChoice(int lowerLimit, int upperLimit) {
 bool printRoomChoices(bool hideUnavailable) {
     int typeCount = getRoomTypeCount();
 
-    bool flag = false;
+    bool hasAvailableRoom = false;
     for (int i = 0; i < typeCount; i++) {
         room roomInfo = getRoomInfo(i);
         if (!hideUnavailable || roomInfo.isAvailable) {
-            flag = true;
+            hasAvailableRoom = true;
             printf("\t%d. \"%s\" - ", i + 1, roomInfo.roomName);
             printf("Hourly: ");
             if (roomInfo.price[HOUR_PRICE]) {
@@ -137,7 +139,7 @@ bool printRoomChoices(bool hideUnavailable) {
         }
     }
 
-    if (typeCount == 0 || (hideUnavailable && !flag)) {
+    if (typeCount == 0 || (hideUnavailable && !hasAvailableRoom)) {
         printf("\tNo rooms available.\n");
         return false;
     }
@@ -151,6 +153,7 @@ int getRoomChoice(bool hideUnavailable) {
     int roomTypeCount = getRoomTypeCount();
 
     char *userInput;
+
     while (true) {
         userInput = getUserInput();
         if (sscanf(userInput, "%d", &roomChoice) < 1) {
@@ -181,6 +184,7 @@ int getRoomChoice(bool hideUnavailable) {
     return roomChoice;
 }
 
+/* List room info */
 void printRoomInfo(room roomInfo) {
 
     printf("\tName: \t\t%s\n", roomInfo.roomName);
@@ -201,10 +205,15 @@ void printRoomInfo(room roomInfo) {
         printf("Unavailable");
     }
     printf("\n");
-
     printf("\n");
 }
 
+/* Retrieve datetime user input
+ * varNum means number of variables.
+ * 2: MM/YYYY
+ * 3: MM/DD/YYYY
+ * 4: MM/DD/YYYY HH
+ * */
 datetime getDatetime(int varNum) {
     datetime d;
 

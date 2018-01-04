@@ -1,5 +1,5 @@
 //
-// Created by codgician on 12/22/2017.
+// Created by intochange on 12/22/2017.
 //
 // This file contains several functions
 // that are related to datetime calculations.
@@ -9,7 +9,20 @@
 
 // Days for each month
 // Should not be used directly! Use getMonthDayCount(int month, int year) instead!
-int monthArr[MONTH_COUNT] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+int monthArr[MONTH_COUNT] = {
+        MONTH_DAY_SOLAR,            // January
+        MONTH_DAY_FEB_COMMON,       // February
+        MONTH_DAY_SOLAR,            // March
+        MONTH_DAT_LUNAR,            // April
+        MONTH_DAY_SOLAR,            // May
+        MONTH_DAT_LUNAR,            // June
+        MONTH_DAY_SOLAR,            // July
+        MONTH_DAY_SOLAR,            // August
+        MONTH_DAT_LUNAR,            // September
+        MONTH_DAY_SOLAR,            // October
+        MONTH_DAT_LUNAR,            // November
+        MONTH_DAY_SOLAR             // December
+};
 
 /* Judge whether a given year is a leap year */
 bool isLeapYear(int year) {
@@ -19,7 +32,7 @@ bool isLeapYear(int year) {
 /* Get day count of a certain month of a certain year */
 int getMonthDayCount(int month, int year) {
     if (month == 2) {
-        return isLeapYear(year) ? 29 : 28;
+        return isLeapYear(year) ? MONTH_DAY_FEB_LEAP : MONTH_DAY_FEB_COMMON;
     } else {
         return monthArr[month - 1];
     }
@@ -104,7 +117,7 @@ long long int getIntervalDays(datetime startDatetime, datetime endDatetime) {
 
     long long int result = getDayNumInYear(endDatetime) - getDayNumInYear(startDatetime);
     for (int i = startDatetime.year; i <= endDatetime.year - 1; i++) {
-        result += (isLeapYear(i) ? 366 : 365);
+        result += (isLeapYear(i) ? YEAR_DAY_LEAP : YEAR_DAY_COMMON);
     }
 
     return result;
@@ -124,7 +137,7 @@ long long int getIntervalHours(datetime startDatetime, datetime endDatetime) {
         return -1;
     }
 
-    long long int result = endDatetime.hour - startDatetime.hour + getIntervalDays(startDatetime, endDatetime) * 24;
+    long long int result = endDatetime.hour - startDatetime.hour + getIntervalDays(startDatetime, endDatetime) * HOUR_COUNT;
 
     return result;
 }
