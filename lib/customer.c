@@ -28,7 +28,7 @@ long long int getPrice(room roomInfo, int priceType, long long int duration) {
         return -1;
     }
 
-    if (duration <= 0) {
+    if (duration < 0) {
         printInternalError("Invalid duration", "getPrice");
         return -1;
     }
@@ -71,7 +71,7 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     } else {
         cntDatetime.month++;
     }
-    while (cntDatetime.year <= endDatetime.year && cntDatetime.month < endDatetime.month) {
+    while (cmpDatetime(cntDatetime, endDatetime, CHECK_YEAR + CHECK_MONTH) == 0) {
         if (priceType == HOUR_PRICE) {
             cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year) * HOUR_COUNT);
         } else {
@@ -90,7 +90,7 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     }
 
     if (priceType == HOUR_PRICE) {
-        cntPrice = getPrice(roomInfo, priceType, endDatetime.day - 1) * HOUR_COUNT + endDatetime.hour;
+        cntPrice = getPrice(roomInfo, priceType, (endDatetime.day - 1) * HOUR_COUNT + endDatetime.hour);
     } else {
         cntPrice = getPrice(roomInfo, priceType, endDatetime.day - 1);
     }
