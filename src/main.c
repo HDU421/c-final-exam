@@ -161,7 +161,7 @@ int editRoomMenu() {
     }
 
     // Get room info
-    room roomInfo = getRoomInfo(roomChoice - 1);
+    room roomInfo = getRoomInfo(roomChoice);
     if (roomInfo.price[0] < 0) {
         printf("\n");
         printf("Failed to retrieve room information!");
@@ -193,7 +193,7 @@ int editRoomMenu() {
     }
 
     // Update room info!
-    result = updateRoomInfo(roomChoice - 1, roomInfo);
+    result = updateRoomInfo(roomChoice, roomInfo);
     clearConsole();
     if (result) {
         printf("\nRoom successfully updated!\n\n");
@@ -242,7 +242,7 @@ int toggleRoomMenu() {
     }
 
     // Retrieve room info
-    room roomInfo = getRoomInfo(roomChoice - 1);
+    room roomInfo = getRoomInfo(roomChoice);
     if (roomInfo.price[0] < 0) {
         printf("Failed to retrieve room information!");
         pauseConsole();
@@ -251,7 +251,7 @@ int toggleRoomMenu() {
 
     // Toggle room availability!
     roomInfo.isAvailable = !roomInfo.isAvailable;
-    result = updateRoomInfo(roomChoice - 1, roomInfo);
+    result = updateRoomInfo(roomChoice, roomInfo);
     clearConsole();
     if (result) {
         printf("\nRoom availability successfully updated!\n\n");
@@ -298,7 +298,7 @@ int customerMenu() {
     }
 
     // Retrieve room info
-    room roomInfo = getRoomInfo(roomChoice - 1);
+    room roomInfo = getRoomInfo(roomChoice);
     if (roomInfo.price[0] < 0) {
         printf("Failed to retrieve room information!");
         pauseConsole();

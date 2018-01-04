@@ -138,7 +138,7 @@ bool printRoomChoices(bool hideUnavailable) {
     return true;
 }
 
-/* Get room type choice (need to minus 1 before using) */
+/* Get room type choice */
 int getRoomChoice(bool hideUnavailable) {
     int roomChoice;
     int roomTypeCount = getRoomTypeCount();
