@@ -10,7 +10,8 @@
 #include "customer.h"
 
 // struct "revenue" is defined in "customer.h"
-revenue revenueArr[YEAR_COUNT][MONTH_COUNT], revenueBakupArr[YEAR_COUNT][MONTH_COUNT];
+revenue revenueArr[YEAR_COUNT][MONTH_COUNT];
+revenue revenueBackupArr[YEAR_COUNT][MONTH_COUNT];
 
 /* Initialize revenue array */
 void initRevenueArr() {
@@ -18,18 +19,20 @@ void initRevenueArr() {
         for (int j = 0; j < MONTH_COUNT; j++) {
             revenueArr[i][j].expected = 0;
             revenueArr[i][j].real = 0;
+            revenueBackupArr[i][j].expected = 0;
+            revenueBackupArr[i][j].real = 0;
         }
     }
 }
 
 /* Revert revenueArr to revenueBackupArr, called when checkIn() fails */
 void revertRevenue() {
-    memcpy(revenueArr, revenueBakupArr, sizeof(revenueBakupArr));
+    memcpy(revenueArr, revenueBackupArr, sizeof(revenueBackupArr));
 }
 
 /* Update revenueBackupArr to revenueArr, called when checkIn() succeeds */
 void updateBackup() {
-    memcpy(revenueBakupArr, revenueArr, sizeof(revenueArr));
+    memcpy(revenueBackupArr, revenueArr, sizeof(revenueArr));
 }
 
 /* Calculate total price for a specific check-in */
