@@ -5,8 +5,8 @@
 #ifndef C_FINAL_EXAM_ROOM_H
 #define C_FINAL_EXAM_ROOM_H
 
-#define MAX_ROOM_NAME_LENGTH 10010
-#define MAX_ROOM_NUMBER 10010
+#define MAX_ROOM_NAME_LENGTH 10010      // Maximum length of room name
+#define MAX_ROOM_NUMBER 10010           // Maximum number of room types
 #define HOUR_PRICE 0
 #define DAY_PRICE 1
 
@@ -15,7 +15,7 @@
 
 typedef struct _Room {
     int price[2];
-    char roomName[MAX_ROOM_NAME_LENGTH];
+    char roomName[MAX_ROOM_NAME_LENGTH + 1];
     bool isAvailable;
 } room;
 

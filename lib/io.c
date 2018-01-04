@@ -1,6 +1,9 @@
 //
 // Created by codgician on 12/29/2017.
 //
+// This file contains several functions
+// that handles user input and formatted output.
+//
 
 #include <stdio.h>
 #include <string.h>

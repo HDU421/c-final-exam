@@ -71,6 +71,15 @@ int printRoomMenu() {
 int addRoomMenu() {
     printf("\t\tAdd new room\t\t\n\n");
 
+    // Return if number of room type has already reached upper limit
+    int roomTypeCount = getRoomTypeCount();
+    if (roomTypeCount == MAX_ROOM_NUMBER) {
+        printf("\tThe number of room type has already reached upper limit...\n");
+        printf("\n");
+        pauseConsole();
+        return ROOM_MENU;
+    }
+
     room newRoomInfo;
     newRoomInfo.isAvailable = true;
 

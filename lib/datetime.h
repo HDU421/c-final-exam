@@ -8,26 +8,26 @@
 #include "bool.h"
 #include "error.h"
 
-#define YEAR_MIN 1970
-#define YEAR_MAX 9999
-#define YEAR_COUNT 8030
-#define YEAR_DAY_LEAP 366
-#define YEAR_DAY_COMMON 365
-#define MONTH_MIN 1
-#define MONTH_MAX 12
-#define MONTH_COUNT 12
-#define MONTH_DAY_FEB_COMMON 28
-#define MONTH_DAY_FEB_LEAP 29
-#define MONTH_DAT_LUNAR 30
-#define MONTH_DAY_SOLAR 31
-#define HOUR_MIN 0
-#define HOUR_MAX 23
-#define HOUR_COUNT 24
+#define YEAR_MIN 1970               // Minimum support year
+#define YEAR_MAX 9999               // Maximum support year
+#define YEAR_COUNT 8030             // Total support year count
+#define YEAR_DAY_COMMON 365         // Common year day count
+#define YEAR_DAY_LEAP 366           // Leap year day count
+#define MONTH_MIN 1                 // Minimum support month
+#define MONTH_MAX 12                // Maximum support month
+#define MONTH_COUNT 12              // Total support month count
+#define MONTH_DAY_FEB_COMMON 28     // Days of February in common years
+#define MONTH_DAY_FEB_LEAP 29       // Days of February in leap years
+#define MONTH_DAT_LUNAR 30          // Days of lunar months
+#define MONTH_DAY_SOLAR 31          // Days of solar months
+#define HOUR_MIN 0                  // Minimum support hour
+#define HOUR_MAX 23                 // Maximum support hour
+#define HOUR_COUNT 24               // Total support hour count
 
-#define CHECK_YEAR 1
-#define CHECK_MONTH 2
-#define CHECK_DAY 4
-#define CHECK_HOUR 8
+#define CHECK_YEAR 1                // 0001
+#define CHECK_MONTH 2               // 0010
+#define CHECK_DAY 4                 // 0100
+#define CHECK_HOUR 8                // 1000
 
 typedef struct _Datetime {
     int year;
