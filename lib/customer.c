@@ -5,10 +5,12 @@
 // that are related to customer management.
 //
 
+#include <string.h>
+
 #include "customer.h"
 
 // struct "revenue" is defined in "customer.h"
-revenue revenueArr[YEAR_COUNT][MONTH_COUNT];
+revenue revenueArr[YEAR_COUNT][MONTH_COUNT], revenueBakupArr[YEAR_COUNT][MONTH_COUNT];
 
 /* Initialize revenue array */
 void initRevenueArr() {
@@ -18,6 +20,16 @@ void initRevenueArr() {
             revenueArr[i][j].real = 0;
         }
     }
+}
+
+/* Revert revenueArr to revenueBackupArr, called when checkIn() fails */
+void revertRevenue() {
+    memcpy(revenueArr, revenueBakupArr, sizeof(revenueBakupArr));
+}
+
+/* Update revenueBackupArr to revenueArr, called when checkIn() succeeds */
+void updateBackup() {
+    memcpy(revenueBakupArr, revenueArr, sizeof(revenueArr));
 }
 
 /* Calculate total price for a specific check-in */
@@ -60,6 +72,11 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     } else {
         cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
     }
+    if (cntPrice < 0) {
+        // No need to revert here
+        printInternalError("cntPrice possibly overflowed", "checkIn");
+        return false;
+    }
     revenueArr[startDatetime.year - YEAR_MIN][startDatetime.month - MONTH_MIN].expected += cntPrice;
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
 
@@ -76,6 +93,12 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
             cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year) * HOUR_COUNT);
         } else {
             cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year));
+        }
+        if (cntPrice < 0) {
+            printInternalError("cntPrice possibly overflowed.", "checkIn");
+            // Revert revenue to backup state
+            revertRevenue();
+            return false;
         }
         revenueArr[cntDatetime.year - YEAR_MIN][cntDatetime.month - MONTH_MIN].expected += cntPrice;
         revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
@@ -94,8 +117,15 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     } else {
         cntPrice = getPrice(roomInfo, priceType, endDatetime.day - 1);
     }
+    if (cntPrice < 0) {
+        printInternalError("cntPrice possibly overflowed. Data corrupted!", "checkIn");
+        revertRevenue();
+        return false;
+    }
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].expected += cntPrice;
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+
+    updateBackup();
 
     return true;
 }
