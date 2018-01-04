@@ -27,7 +27,13 @@ void pauseConsole() {
 /* Flushes stdin buffer (**failing on Linux with gcc 6) */
 void flushStdin() {
     char ch = 0;
+    #if defined linux
+    while (!feof(stdin)) {
+        ch = getchar();
+    }
+    #else
     while ((ch = getchar()) != '\n' && ch != EOF) { }
+    #endif
 }
 
 /* Returns a trimmed string, removes spaces at front and end */
