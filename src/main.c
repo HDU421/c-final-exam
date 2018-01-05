@@ -383,14 +383,14 @@ int customerMenu() {
         printf("Failed to check in customer. Revenue data reverted.\n");
         printf("Possibly the amount of money customer has to pay has exceeded int64.\n");
     } else {
-        printf("Successfully checked in!\n");
-        printf("\t Arrival: ");
+        printf("Successfully checked in!\n\n");
+        printf("\tArrival: ");
         printDatetime(startDatetime, varNum);
         printf("\n");
-        printf("\t Departure: ");
+        printf("\tDeparture: ");
         printDatetime(endDatetime, varNum);
         printf("\n");
-        printf("\t Fee: %lld\n", totPrice);
+        printf("\tFee: %lld\n", totPrice);
     }
     printf("\n");
 
@@ -432,7 +432,7 @@ int reportMenu() {
 
     // Print financial report
     clearConsole();
-    printf("\t\t Financial Report of ");
+    printf("\t\tFinancial Report of ");
     printDatetime(d, 2);
     printf("\n\n\n");
     printf("\tExpected:\t%d\n", result.expected);
@@ -441,8 +441,8 @@ int reportMenu() {
 
     // Next step?
     printf("\t\tNext step?\t\t\n\n");
-    printf("\t1. Get financial report of another month\n\n");
-    printf("\t0. Go back...\n\n");
+    printf("\t 1. Get financial report of another month\n\n");
+    printf("\t 0. Go back...\n\n");
     printf("\n");
     printf("Please select an option to get started:\n");
 

@@ -90,9 +90,9 @@ long long int checkIn(room roomInfo, int priceType, datetime startDatetime, date
 
     datetime cntDatetime = startDatetime;
     // cntDatetime++
-    if (cntDatetime.month == 12) {
+    if (cntDatetime.month == MONTH_MAX) {
         cntDatetime.year++;
-        cntDatetime.month = 1;
+        cntDatetime.month = MONTH_MIN;
     } else {
         cntDatetime.month++;
     }
@@ -119,9 +119,9 @@ long long int checkIn(room roomInfo, int priceType, datetime startDatetime, date
         }
 
         // cntDatetime++
-        if (cntDatetime.month == 12) {
+        if (cntDatetime.month == MONTH_MAX) {
             cntDatetime.year++;
-            cntDatetime.month = 1;
+            cntDatetime.month = MONTH_MIN;
         } else {
             cntDatetime.month++;
         }
@@ -167,5 +167,5 @@ revenue getReport(datetime d) {
         return err;
     }
 
-    return revenueArr[d.year - 1970][d.month - 1];
+    return revenueArr[d.year - YEAR_MIN][d.month - MONTH_MIN];
 }
