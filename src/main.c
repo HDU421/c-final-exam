@@ -375,8 +375,24 @@ int customerMenu() {
         break;
     }
 
+    clearConsole();
+
     // Register customer
-    checkIn(roomInfo, priceType, startDatetime, endDatetime);
+    long long int totPrice = checkIn(roomInfo, priceType, startDatetime, endDatetime);
+    if (totPrice < 0) {
+        printf("Failed to check in customer. Revenue data reverted.\n");
+        printf("Possibly the amount of money customer has to pay has exceeded int64.\n");
+    } else {
+        printf("Successfully checked in!\n");
+        printf("\t Arrival: ");
+        printDatetime(startDatetime, varNum);
+        printf("\n");
+        printf("\t Departure: ");
+        printDatetime(endDatetime, varNum);
+        printf("\n");
+        printf("\t Fee: %lld\n", totPrice);
+    }
+    printf("\n");
 
     // Next step?
     printf("\t\tNext step?\t\t\n\n");
@@ -416,7 +432,9 @@ int reportMenu() {
 
     // Print financial report
     clearConsole();
-    printf("\t\tFinancial Report of %02d/%04d\t\t\n\n\n", d.month, d.year);
+    printf("\t\t Financial Report of ");
+    printDatetime(d, 2);
+    printf("\n\n\n");
     printf("\tExpected:\t%d\n", result.expected);
     printf("\tReal:\t\t%d\n", result.real);
     printf("\n\n");

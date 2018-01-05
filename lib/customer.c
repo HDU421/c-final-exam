@@ -52,7 +52,7 @@ long long int getPrice(room roomInfo, int priceType, long long int duration) {
 }
 
 /* Check in and update revenue */
-bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
+long long int checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endDatetime) {
 
     unsigned int checkOption;
     if (priceType == DAY_PRICE) {
@@ -61,15 +61,15 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
         checkOption = CHECK_YEAR + CHECK_MONTH + CHECK_DAY + CHECK_HOUR;
     } else {
         printInternalError("Invalid price type", "checkIn");
-        return false;
+        return -1;
     }
 
     if (cmpDatetime(startDatetime, endDatetime, checkOption) == 1) {
         printInternalError("End datetime smaller than start datetime", "checkIn");
-        return false;
+        return -1;
     }
 
-    long long int cntPrice = 0;
+    long long int cntPrice = 0, totPrice = 0;
     if (priceType == HOUR_PRICE) {
         cntPrice = getPrice(roomInfo, priceType, (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day) * HOUR_COUNT + (HOUR_MAX - startDatetime.hour + 1));
     } else {
@@ -78,10 +78,15 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
     if (cntPrice < 0) {
         // No need to revert here
         printInternalError("cntPrice possibly overflowed", "checkIn");
-        return false;
+        return -1;
     }
     revenueArr[startDatetime.year - YEAR_MIN][startDatetime.month - MONTH_MIN].expected += cntPrice;
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+    totPrice += cntPrice;
+    if (totPrice < 0) {
+        printInternalError("totPrice possibly overflowed", "totPrice");
+        return -1;
+    }
 
     datetime cntDatetime = startDatetime;
     // cntDatetime++
@@ -98,13 +103,20 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
             cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(cntDatetime.month, cntDatetime.year));
         }
         if (cntPrice < 0) {
-            printInternalError("cntPrice possibly overflowed.", "checkIn");
+            printInternalError("cntPrice possibly overflowed", "checkIn");
             // Revert revenue to backup state
             revertRevenue();
-            return false;
+            return -1;
         }
         revenueArr[cntDatetime.year - YEAR_MIN][cntDatetime.month - MONTH_MIN].expected += cntPrice;
         revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+        totPrice += cntPrice;
+        if (totPrice < 0) {
+            printInternalError("totPrice possibly overflowed", "totPrice");
+            // Revert revenue to backup state
+            revertRevenue();
+            return -1;
+        }
 
         // cntDatetime++
         if (cntDatetime.month == 12) {
@@ -121,16 +133,23 @@ bool checkIn(room roomInfo, int priceType, datetime startDatetime, datetime endD
         cntPrice = getPrice(roomInfo, priceType, endDatetime.day - 1);
     }
     if (cntPrice < 0) {
-        printInternalError("cntPrice possibly overflowed. Data corrupted!", "checkIn");
+        printInternalError("cntPrice possibly overflowed", "checkIn");
         revertRevenue();
-        return false;
+        return -1;
     }
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].expected += cntPrice;
     revenueArr[endDatetime.year - YEAR_MIN][endDatetime.month - MONTH_MIN].real += cntPrice;
+    totPrice += cntPrice;
+    if (totPrice < 0) {
+        printInternalError("totPrice possibly overflowed", "totPrice");
+        // Revert revenue to backup state
+        revertRevenue();
+        return -1;
+    }
 
     updateBackup();
 
-    return true;
+    return totPrice;
 }
 
 /* Return financial report for a specific month */

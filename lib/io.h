@@ -22,5 +22,6 @@ bool printRoomChoices(bool hideUnavailable);
 int getRoomChoice(bool hideUnavailable);
 void printRoomInfo(room roomInfo);
 datetime getDatetime(int varNum);
+bool printDatetime(datetime d, int varNum);
 
 #endif //C_FINAL_EXAM_INPUT_H

@@ -109,11 +109,11 @@ bool printRoomChoices(bool hideUnavailable) {
     int typeCount = getRoomTypeCount();
 
     bool hasAvailableRoom = false;
-    for (int i = 0; i < typeCount; i++) {
+    for (int i = 1; i <= typeCount; i++) {
         room roomInfo = getRoomInfo(i);
         if (!hideUnavailable || roomInfo.isAvailable) {
             hasAvailableRoom = true;
-            printf("\t%d. \"%s\" - ", i + 1, roomInfo.roomName);
+            printf("\t%d. \"%s\" - ", i, roomInfo.roomName);
             printf("Hourly: ");
             if (roomInfo.price[HOUR_PRICE]) {
                 printf("%u", roomInfo.price[HOUR_PRICE]);
@@ -302,4 +302,21 @@ datetime getDatetime(int varNum) {
     free(userInput);
 
     return d;
+}
+
+bool printDatetime(datetime d, int varNum) {
+    if (varNum > 4 || varNum < 2) {
+        printInternalError("Invalid varNum", "printDatetime");
+        return false;
+    }
+
+    if (varNum == 2) {
+        printf("%02d/%04d", d.month, d.year);
+    } else if (varNum == 3) {
+        printf("%02d/%02d/%04d", d.month, d.day, d.year);
+    } else if (varNum == 4) {
+        printf("%02d/%02d/%04d %02d", d.month, d.day, d.year, d.hour);
+    }
+
+    return true;
 }
