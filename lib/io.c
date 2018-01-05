@@ -127,6 +127,7 @@ bool printRoomChoices(bool hideUnavailable) {
                 printf("Unavailable");
             }
             printf(", Availability: %s\n", roomInfo.isAvailable ? "true" : "false");
+            printf("\n");
         }
     }
 

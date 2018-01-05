@@ -122,7 +122,7 @@ int addRoomMenu() {
     }
 
     // Next step?
-    printf("\t\tNext step?\t\t\n\n");
+    printf("\n\t\tNext step?\t\t\n\n");
     printf("\t1. Add another room\n\n");
     printf("\t0. Back...\n\n");
     printf("\n");
@@ -204,7 +204,7 @@ int editRoomMenu() {
     }
 
     // Next step?
-    printf("\t\tNext step?\t\t\n\n");
+    printf("\n\t\tNext step?\t\t\n\n");
     printf("\t1. Edit another room\n\n");
     printf("\t0. Back...\n\n");
     printf("\n");
@@ -260,7 +260,7 @@ int toggleRoomMenu() {
     }
 
     // Next step?
-    printf("\t\tNext step?\t\t\n\n");
+    printf("\n\t\tNext step?\t\t\n\n");
     printf("\t1. Toggle another room\n\n");
     printf("\t0. Back...\n\n");
     printf("\n");
@@ -395,7 +395,7 @@ int customerMenu() {
     printf("\n");
 
     // Next step?
-    printf("\t\tNext step?\t\t\n\n");
+    printf("\n\t\tNext step?\t\t\n\n");
     printf("\t1. Check in another customer\n\n");
     printf("\t0. Back...\n\n");
     printf("\n");
@@ -440,7 +440,7 @@ int reportMenu() {
     printf("\n\n");
 
     // Next step?
-    printf("\t\tNext step?\t\t\n\n");
+    printf("\n\t\tNext step?\t\t\n\n");
     printf("\t 1. Get financial report of another month\n\n");
     printf("\t 0. Go back...\n\n");
     printf("\n");
