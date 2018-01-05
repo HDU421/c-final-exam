@@ -69,9 +69,10 @@ long long int checkIn(room roomInfo, int priceType, datetime startDatetime, date
         return -1;
     }
 
+    // First calculate price of startDatetime's month
     long long int cntPrice = 0, totPrice = 0;
     if (priceType == HOUR_PRICE) {
-        cntPrice = getPrice(roomInfo, priceType, (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day) * HOUR_COUNT + (HOUR_MAX - startDatetime.hour + 1));
+        cntPrice = getPrice(roomInfo, priceType, (getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1) * HOUR_COUNT - startDatetime.hour);
     } else {
         cntPrice = getPrice(roomInfo, priceType, getMonthDayCount(startDatetime.month, startDatetime.year) - startDatetime.day + 1);
     }

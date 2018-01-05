@@ -84,7 +84,7 @@ int addRoomMenu() {
     newRoomInfo.isAvailable = true;
 
     // Prompt for room name
-    printf("Please enter room name (Enter 0 to go back):\n");
+    printf("Please enter room name (0 to go back):\n");
     char *userInput = getUserInput();
     strncpy(newRoomInfo.roomName, userInput, sizeof(newRoomInfo.roomName));
 
@@ -154,7 +154,7 @@ int editRoomMenu() {
     }
 
     // Prompt for room choice
-    printf("\nPlease select a room type from above to get started:\n");
+    printf("\nPlease select a room type from above to get started (0 to go back):\n");
     int roomChoice = getRoomChoice(false);
     if (roomChoice == 0) {
         return ROOM_MENU;
@@ -235,7 +235,7 @@ int toggleRoomMenu() {
     }
 
     // Prompt for room choice
-    printf("\nPlease select a room type from above to toggle availability:\n");
+    printf("\nPlease select a room type from above to get started (0 to go back):\n");
     int roomChoice = getRoomChoice(false);
     if (roomChoice == 0) {
         return ROOM_MENU;
@@ -291,7 +291,7 @@ int customerMenu() {
     }
 
     // Prompt for room choices
-    printf("\nPlease select a room type from above to get started:\n");
+    printf("\nPlease select a room type from above to get started (0 to go back):\n");
     int roomChoice = getRoomChoice(false);
     if (roomChoice == 0) {
         return MAIN_MENU;
