@@ -53,8 +53,8 @@ char *trim(char *str) {
     }
 
     // Free pointer
-    str = NULL;
     free(str);
+    str = NULL;
 
     return result;
 }
@@ -98,8 +98,8 @@ int getMenuChoice(int lowerLimit, int upperLimit) {
     }
 
     // Free pointer
-    userInput = NULL;
     free(userInput);
+    userInput = NULL;
 
     return choice;
 }
@@ -169,8 +169,8 @@ int getRoomChoice(bool hideUnavailable) {
         break;
     }
 
-    userInput = NULL;
     free(userInput);
+    userInput = NULL;
 
     return roomChoice;
 }
@@ -298,8 +298,8 @@ datetime getDatetime(int varNum) {
         }
     }
 
-    userInput = NULL;
     free(userInput);
+    userInput = NULL;
 
     return d;
 }

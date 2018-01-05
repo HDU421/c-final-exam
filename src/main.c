@@ -96,8 +96,8 @@ int addRoomMenu() {
     }
 
     // Free pointer
-    userInput = NULL;
     free(userInput);
+    userInput = NULL;
 
     // Return to room menu if user input is "0"
     if (!strcmp(newRoomInfo.roomName, "0")) {
@@ -183,8 +183,8 @@ int editRoomMenu() {
     }
 
     // Free pointer
-    newRoomName = NULL;
     free(newRoomName);
+    newRoomName = NULL;
 
     // Prompt for new room price
     printf("Please enter new price (HOURLY/DAILY, 0 if such type is not available):\n");
